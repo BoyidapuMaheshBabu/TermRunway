@@ -3,7 +3,7 @@
 > **A student-focused budget planning web application.**
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-00C853?style=for-the-badge)](https://termrunway.netlify.app/)
-[![Status](https://img.shields.io/badge/Status-Active%20Development-orange?style=for-the-badge)](https://github.com/maheshbabuboyidapu-alt/TermRunway)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-orange?style=for-the-badge)](https://github.com/BoyidapuMaheshBabu/TermRunway)
 
 **Live App:** https://termrunway.netlify.app/
 
@@ -108,10 +108,10 @@ The roadmap may change as the project evolves.
 
 ## Developer
 
-**Mahesh Babu Boyidapu**  
+**Boyidapu Mahesh Babu**  
 Diploma in Computer Science Engineering student
 
-GitHub: [@maheshbabuboyidapu-alt](https://github.com/maheshbabuboyidapu-alt)
+GitHub: [@BoyidapuMaheshBabu](https://github.com/BoyidapuMaheshBabu)
 
 ---
 
