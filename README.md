@@ -5,22 +5,24 @@
 [![Live Demo](https://img.shields.io/badge/Live-Demo-00C853?style=for-the-badge)](https://termrunway.netlify.app/)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-orange?style=for-the-badge)](https://github.com/BoyidapuMaheshBabu/TermRunway)
 
+## 🌐 Live Demo
+
+**[Open TermRunway →](https://termrunway.netlify.app/)**
+
 TermRunway helps students understand their income, expenses, remaining balance, and a practical daily spending limit for the time left in a semester or month.
 
-**🌐 [Open the live app →](https://termrunway.netlify.app/)**
+## ⭐ Highlights
 
-## What It Does
+- Semester and monthly budgeting
+- Multiple income sources and expense categories
+- Automatic balance and daily spending-limit calculations
+- 50/30/20 budgeting reference
+- Browser-based data persistence with `localStorage`
+- Input validation and common edge-case handling
+- Responsive layouts for mobile, tablet, and desktop
+- Print / PDF-friendly budget summary
 
-- Tracks multiple income sources and expense categories
-- Supports semester and monthly budgeting
-- Calculates income, expenses, remaining balance, and daily spending limits
-- Includes a 50/30/20 budgeting reference
-- Saves budget data in the browser using `localStorage`
-- Provides reset and print/PDF-friendly options
-- Adapts to mobile, tablet, and desktop screens
-- Validates input and handles common edge cases
-
-## How It Works
+## 🔄 How It Works
 
 ```text
 Income + Expenses
@@ -32,36 +34,32 @@ Time Remaining
 Daily Spending Limit
 ```
 
-The application handles situations such as missing dates, expired periods, zero income, expenses exceeding available funds, and invalid numeric input.
+The application handles cases such as missing dates, expired periods, zero income, expenses exceeding available funds, and invalid numeric input.
 
-## What I Learned
+## 🧠 What I Learned
 
-TermRunway is also part of my project-based learning journey.
+TermRunway was built as a practical learning project. Instead of trying to learn every technology before starting, I used the project to encounter problems and learn what was needed to continue.
 
-I use projects to encounter problems that I do not already know how to solve, then learn the concepts or tools needed to continue.
-
-While building TermRunway, this led me to work with areas such as:
+Areas explored through the project include:
 
 - application logic and calculations
 - input validation and edge cases
 - date handling
 - JSON-based data representation
-- browser `localStorage` and data persistence
+- browser `localStorage` and persistence
 - responsive layouts
-- print/PDF-friendly output
+- browser print functionality
 - maintaining and improving an existing application
 
-The project therefore represents both a practical application and a record of learning through implementation.
-
-## Development Approach
+## 🤖 AI-Assisted Development
 
 TermRunway was built incrementally with AI assistance.
 
 I use AI as a development and learning tool to explore unfamiliar implementation details, understand problems, generate or modify code, debug issues, and iterate on features.
 
-The project is not presented as line-by-line manual coding without AI assistance. The value for me is in **building, encountering problems, learning what is needed, testing, and improving the application**.
+The project is not presented as line-by-line manual coding without AI assistance. Its value for me is in **building, encountering problems, learning what is needed, testing, and improving the application**.
 
-## Technology
+## 🛠️ Technology
 
 ### Frontend
 
@@ -82,7 +80,7 @@ The project is not presented as line-by-line manual coding without AI assistance
 - GitHub
 - Netlify
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 TermRunway/
@@ -94,7 +92,7 @@ TermRunway/
 └── README.md
 ```
 
-## Testing & Improvements
+## 🧪 Testing & Improvements
 
 Changes are tested in the browser as features are added or modified.
 
@@ -108,7 +106,7 @@ Examples of issues addressed during development include:
 - mobile responsiveness
 - print/PDF layout
 
-## Roadmap
+## 🔮 Roadmap
 
 Planned improvements may include:
 
