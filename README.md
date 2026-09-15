@@ -3,13 +3,8 @@
 > **A student-focused budget planning web application.**
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-00C853?style=for-the-badge)](https://termrunway.netlify.app/)
-[![Status](https://img.shields.io/badge/Status-Active%20Development-orange?style=for-the-badge)](https://github.com/BoyidapuMaheshBabu/TermRunway)
 
-## 🌐 Live Demo
-
-**[Open TermRunway →](https://termrunway.netlify.app/)**
-
-TermRunway helps students understand their income, expenses, remaining balance, and a practical daily spending limit for the time left in a semester or month.
+**Live Demo:** https://termrunway.netlify.app/
 
 ## ⭐ Highlights
 
@@ -17,12 +12,14 @@ TermRunway helps students understand their income, expenses, remaining balance, 
 - Multiple income sources and expense categories
 - Automatic balance and daily spending-limit calculations
 - 50/30/20 budgeting reference
-- Browser-based data persistence with `localStorage`
-- Input validation and common edge-case handling
-- Responsive layouts for mobile, tablet, and desktop
+- Browser-based persistence with `localStorage`
+- Input validation and edge-case handling
+- Responsive mobile, tablet, and desktop layouts
 - Print / PDF-friendly budget summary
 
-## 🔄 How It Works
+## 💡 What It Does
+
+TermRunway helps students understand their income, expenses, remaining balance, and a practical daily spending limit for the time left in a semester or month.
 
 ```text
 Income + Expenses
@@ -38,9 +35,9 @@ The application handles cases such as missing dates, expired periods, zero incom
 
 ## 🧠 What I Learned
 
-TermRunway was built as a practical learning project. Instead of trying to learn every technology before starting, I used the project to encounter problems and learn what was needed to continue.
+TermRunway is a practical learning project built by encountering problems and learning what was needed to solve them.
 
-Areas explored through the project include:
+Key areas explored:
 
 - application logic and calculations
 - input validation and edge cases
@@ -55,27 +52,18 @@ Areas explored through the project include:
 
 TermRunway was built incrementally with AI assistance.
 
-I use AI as a development and learning tool to explore unfamiliar implementation details, understand problems, generate or modify code, debug issues, and iterate on features.
+I use AI as a development and learning tool to explore unfamiliar implementation details, generate or modify code, understand errors, and iterate on features.
 
-The project is not presented as line-by-line manual coding without AI assistance. Its value for me is in **building, encountering problems, learning what is needed, testing, and improving the application**.
+The project is **not presented as line-by-line manual coding without AI assistance**. Its value for me is in building, encountering problems, learning what is needed, testing, and improving the application.
 
 ## 🛠️ Technology
-
-### Frontend
 
 - HTML5
 - CSS3
 - Vanilla JavaScript
-
-### Browser APIs
-
-- `localStorage`
+- JSON
+- Browser `localStorage`
 - DOM APIs
-- Date handling
-- Browser print functionality
-
-### Development & Deployment
-
 - Git
 - GitHub
 - Netlify
@@ -96,7 +84,7 @@ TermRunway/
 
 Changes are tested in the browser as features are added or modified.
 
-Examples of issues addressed during development include:
+Examples of issues addressed include:
 
 - monthly date calculations
 - expired semester dates
