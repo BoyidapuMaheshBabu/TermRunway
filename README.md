@@ -106,7 +106,7 @@ The roadmap may change as the project evolves.
 
 **[Open TermRunway →](https://termrunway.netlify.app/)**
 
-## Developer
+## About
 
 **Boyidapu Mahesh Babu**  
 Diploma in Computer Science Engineering student
