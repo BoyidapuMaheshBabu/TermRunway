@@ -2,113 +2,1562 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TermRunway is a student budget planning tool.">
-    <title>TermRunway - My Budget</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="TermRunway is a student financial planning dashboard for semester runway, spending analysis, decisions and savings goals."
+    >
+
+    <title>
+        TermRunway — Student Financial Planner
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Chart.js -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+    ></script>
+
+    <link
+        rel="stylesheet"
+        href="css/styles.css"
+    >
 </head>
+
+
 <body>
 
-    <!-- THE STICKY GLASS NAVBAR (Starts hidden) -->
-    <nav id="glass-nav">
-        <div class="nav-content">
-            <h2 class="nav-logo">TermRunway</h2>
-            <div class="nav-links">
-                <a href="#income-section">Income</a>
-                <a href="#expenses-section">Expenses</a>
-                <a href="#dashboard-section">Summary</a>
-            </div>
-        </div>
-    </nav>
+    <!-- ==================================================
+         HEADER
+    =================================================== -->
 
-    <!-- THE BIG CENTER HERO AREA -->
-    <header id="hero-section">
-        <h1 id="hero-logo">TermRunway</h1>
-        <p>Manage your student budget, smarter.</p>
+    <header class="site-header">
+
+        <div class="container header-inner">
+
+            <a
+                class="brand"
+                href="#top"
+            >
+                TermRunway
+            </a>
+
+
+            <nav
+                class="nav-links"
+                aria-label="Primary navigation"
+            >
+
+                <a href="#planner">
+                    Plan
+                </a>
+
+                <a href="#dashboard">
+                    Dashboard
+                </a>
+
+                <a href="#tracker">
+                    Track
+                </a>
+
+                <a href="#decisions">
+                    Decide
+                </a>
+
+            </nav>
+
+        </div>
+
     </header>
 
-    <!-- THE PILL TOGGLE -->
-    <div class="toggle-container">
-        <div id="mode-toggle">
-            <button id="btn-semester" class="active-mode">Semester Totals</button>
-            <button id="btn-monthly" class="inactive-mode">Monthly Amounts</button>
-        </div>
-    </div>
 
-    <!-- NEW SPLIT-SCREEN LAYOUT -->
-    <main class="app-layout">
-        
-        <!-- LEFT COLUMN: INPUTS -->
-        <div class="input-column">
-            <section id="income-section">
-                <h2>1. Enter Your Income</h2>
-                <p id="income-desc">How much money do you have for the semester?</p>
 
-                <div><label>Scholarship: ₹</label><input type="number" id="income-scholarship" placeholder="0" min="0"></div>
-                <div><label>Part-Time Job: ₹</label><input type="number" id="income-part-time" placeholder="0" min="0"></div>
-                <div><label>Parents Support: ₹</label><input type="number" id="income-parents" placeholder="0" min="0"></div>
-                <div><label>Freelance/Gigs: ₹</label><input type="number" id="income-freelance" placeholder="0" min="0"></div>
-                <div><label>Prior Savings: ₹</label><input type="number" id="income-savings" placeholder="0" min="0"></div>
-                <div><label>Other Income: ₹</label><input type="number" id="income-other" placeholder="0" min="0"></div>
-            </section>
+    <!-- ==================================================
+         MAIN
+    =================================================== -->
 
-            <section id="expenses-section">
-                <h2>2. Enter Your Expenses</h2>
-                <p id="expense-desc">What are your estimated costs?</p>
+    <main id="top">
 
-                <div><label>Rent: ₹</label><input type="number" id="expense-rent" placeholder="0" min="0"></div>
-                <div><label>Food: ₹</label><input type="number" id="expense-food" placeholder="0" min="0"></div>
-                <div><label>Transport: ₹</label><input type="number" id="expense-transport" placeholder="0" min="0"></div>
-                <div><label>Utilities: ₹</label><input type="number" id="expense-utilities" placeholder="0" min="0"></div>
-                <div><label>Entertainment: ₹</label><input type="number" id="expense-entertainment" placeholder="0" min="0"></div>
-                <div><label>Other Expenses: ₹</label><input type="number" id="expense-other" placeholder="0" min="0"></div>
-            </section>
 
-            <section id="timeline-section">
-                <h2>3. Semester Timeline</h2>
-                <p>When does your semester end?</p>
+        <!-- ==================================================
+             HERO
+        =================================================== -->
+
+        <section class="hero">
+
+            <div class="container hero-grid">
+
+
                 <div>
-                    <label>End Date:</label>
-                    <input type="date" id="semester-end">
-                </div>
-            </section>
-        </div>
 
-        <!-- RIGHT COLUMN: DASHBOARD -->
-        <div class="results-column">
-            <section id="dashboard-section">
-                <button id="calculate-btn">Calculate My Budget</button>
-                <button id="reset-btn">Reset Budget</button>
-                <button id="download-btn">Download PDF Summary</button>
-                
-                <div id="results-box">
-                    <h2>Your Summary</h2>
-                    <div class="summary-box">
-                        <p>Total Income: <strong>₹<span id="display-income">0.00</span></strong></p>
-                        <p>Total Expenses: <strong>₹<span id="display-expenses">0.00</span></strong></p>
-                    </div>
-                    
-                    <h3 class="highlight-balance">Remaining Balance: ₹<span id="display-balance">0.00</span></h3>
-                    
-                    <hr>
-                    <div id="daily-limit-message">
-                        <p><em>🗓️ Pick a Semester End Date above to calculate your daily spending limit!</em></p>
-                    </div>
-                    <hr>
-                    
-                    <h3>50/30/20 Breakdown</h3>
-                    <div class="rule-box">
-                        <p>Needs (50%): <span>₹<span id="display-needs">0.00</span></span></p>
-                        <p>Wants (30%): <span>₹<span id="display-wants">0.00</span></span></p>
-                        <p>Savings (20%): <span>₹<span id="display-savings">0.00</span></span></p>
-                    </div>
+                    <p class="eyebrow">
+                        STUDENT FINANCIAL PLANNING
+                    </p>
+
+
+                    <h1>
+                        Know where your money is going.
+                        Know whether it will last.
+                    </h1>
+
+
+                    <p class="hero-copy">
+                        Plan your semester, monitor spending,
+                        test financial decisions, and understand
+                        your projected balance from one dashboard.
+                    </p>
+
                 </div>
-            </section>
-        </div>
+
+
+
+                <div class="hero-note">
+
+                    <span class="hero-note-label">
+                        CORE QUESTION
+                    </span>
+
+
+                    <strong>
+                        Will my money last until the end of my plan?
+                    </strong>
+
+
+                    <span>
+                        TermRunway turns your inputs into a forecast
+                        instead of showing only a total.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==================================================
+             APP
+        =================================================== -->
+
+        <section
+            class="container app-layout"
+            id="planner"
+        >
+
+
+            <!-- ==================================================
+                 PLANNER COLUMN
+            =================================================== -->
+
+            <div class="planner-column">
+
+
+                <!-- ==================================================
+                     STEP 1 — MODE
+                =================================================== -->
+
+                <section class="card">
+
+                    <div class="card-title-row">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                STEP 1
+                            </p>
+
+
+                            <h2>
+                                Choose your planning method
+                            </h2>
+
+
+                            <p id="mode-description">
+                                Enter amounts that cover your whole semester.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="mode-toggle"
+                            role="group"
+                            aria-label="Planning method"
+                        >
+
+                            <button
+                                id="btn-semester"
+                                class="mode-btn active"
+                                type="button"
+                            >
+                                Semester
+                            </button>
+
+
+                            <button
+                                id="btn-monthly"
+                                class="mode-btn"
+                                type="button"
+                            >
+                                Monthly
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     STEP 2 — MONEY AVAILABLE
+                =================================================== -->
+
+                <section class="card">
+
+                    <div class="card-heading">
+
+                        <p class="section-kicker">
+                            STEP 2
+                        </p>
+
+
+                        <h2>
+                            Money available now
+                        </h2>
+
+
+                        <p>
+                            This is money already available today.
+                            It is never multiplied by the number of months.
+                        </p>
+
+                    </div>
+
+
+                    <div class="input-group full">
+
+                        <label for="available-money">
+
+                            Available money now
+
+                            <span>
+                                ₹
+                            </span>
+
+                        </label>
+
+
+                        <input
+                            id="available-money"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="0"
+                        >
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     STEP 3 — INCOME
+                =================================================== -->
+
+                <section class="card">
+
+                    <div class="card-heading">
+
+                        <p class="section-kicker">
+                            STEP 3
+                        </p>
+
+
+                        <h2>
+                            Expected income
+                        </h2>
+
+
+                        <p id="income-desc">
+                            Enter income you expect to receive during
+                            the semester.
+                        </p>
+
+                    </div>
+
+
+                    <div class="field-grid">
+
+
+                        <div class="input-group">
+
+                            <label for="income-scholarship">
+
+                                Scholarship
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="income-scholarship"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="income-part-time">
+
+                                Part-time job
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="income-part-time"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="income-parents">
+
+                                Parents support
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="income-parents"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="income-freelance">
+
+                                Freelance / gigs
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="income-freelance"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="income-other">
+
+                                Other income
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="income-other"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     STEP 4 — EXPENSES
+                =================================================== -->
+
+                <section class="card">
+
+                    <div class="card-heading">
+
+                        <p class="section-kicker">
+                            STEP 4
+                        </p>
+
+
+                        <h2>
+                            Planned expenses
+                        </h2>
+
+
+                        <p id="expense-desc">
+                            Enter your estimated expenses for the semester.
+                        </p>
+
+                    </div>
+
+
+                    <div class="field-grid">
+
+
+                        <div class="input-group">
+
+                            <label for="expense-rent">
+
+                                Rent / hostel
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="expense-rent"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="expense-food">
+
+                                Food
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="expense-food"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="expense-transport">
+
+                                Transport
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="expense-transport"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="expense-utilities">
+
+                                Utilities
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="expense-utilities"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="expense-entertainment">
+
+                                Entertainment
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="expense-entertainment"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="expense-other">
+
+                                Other expenses
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="expense-other"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     STEP 5 — TIMELINE
+                =================================================== -->
+
+                <section class="card">
+
+                    <div class="card-heading">
+
+                        <p class="section-kicker">
+                            STEP 5
+                        </p>
+
+
+                        <h2>
+                            Set your timeline
+                        </h2>
+
+
+                        <p>
+                            Your forecast is calculated against this
+                            future date.
+                        </p>
+
+                    </div>
+
+
+                    <div class="input-group full">
+
+                        <label for="semester-end">
+                            End date
+                        </label>
+
+
+                        <input
+                            id="semester-end"
+                            type="date"
+                        >
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- ==================================================
+                     ACTIONS
+                =================================================== -->
+
+                <div class="action-row">
+
+                    <button
+                        id="calculate-btn"
+                        class="primary-btn"
+                        type="button"
+                    >
+                        Update My Runway
+                    </button>
+
+
+                    <button
+                        id="reset-btn"
+                        class="secondary-btn"
+                        type="button"
+                    >
+                        Reset
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="validation-message"
+                    class="validation"
+                    aria-live="polite"
+                ></p>
+
+
+
+                <!-- ==================================================
+                     ACTUAL EXPENSE TRACKER
+                =================================================== -->
+
+                <section
+                    class="card"
+                    id="tracker"
+                >
+
+                    <div class="card-heading">
+
+                        <p class="section-kicker">
+                            TRACK
+                        </p>
+
+
+                        <h2>
+                            Record an actual expense
+                        </h2>
+
+
+                        <p>
+                            Compare what you planned with
+                            what you actually spent.
+                        </p>
+
+                    </div>
+
+
+                    <div class="tracker-form">
+
+
+                        <div class="input-group">
+
+                            <label for="transaction-date">
+                                Date
+                            </label>
+
+                            <input
+                                id="transaction-date"
+                                type="date"
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="transaction-category">
+                                Category
+                            </label>
+
+
+                            <select
+                                id="transaction-category"
+                            >
+
+                                <option value="rent">
+                                    Rent / hostel
+                                </option>
+
+                                <option value="food">
+                                    Food
+                                </option>
+
+                                <option value="transport">
+                                    Transport
+                                </option>
+
+                                <option value="utilities">
+                                    Utilities
+                                </option>
+
+                                <option value="entertainment">
+                                    Entertainment
+                                </option>
+
+                                <option value="other">
+                                    Other expenses
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="transaction-description">
+                                Description
+                            </label>
+
+
+                            <input
+                                id="transaction-description"
+                                type="text"
+                                maxlength="80"
+                                placeholder="Lunch, bus pass..."
+                            >
+
+                        </div>
+
+
+
+                        <div class="input-group">
+
+                            <label for="transaction-amount">
+
+                                Amount
+
+                                <span>₹</span>
+
+                            </label>
+
+
+                            <input
+                                id="transaction-amount"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+
+                        </div>
+
+
+                        <button
+                            id="add-transaction-btn"
+                            class="primary-btn"
+                            type="button"
+                        >
+                            Add Expense
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="transaction-list"
+                        class="transaction-list"
+                    ></div>
+
+                </section>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 DASHBOARD
+            =================================================== -->
+
+            <aside
+                class="dashboard-column"
+                id="dashboard"
+            >
+
+                <div class="dashboard-card">
+
+
+                    <!-- DASHBOARD HEADER -->
+
+                    <div class="dashboard-header">
+
+                        <div>
+
+                            <p class="section-kicker">
+                                YOUR RUNWAY
+                            </p>
+
+
+                            <h2>
+                                Financial dashboard
+                            </h2>
+
+                        </div>
+
+
+                        <span
+                            id="status-pill"
+                            class="status-pill neutral"
+                        >
+                            Waiting for plan
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- MAIN METRICS -->
+
+                    <div class="metric-grid">
+
+
+                        <div class="metric">
+
+                            <span>
+                                Available now
+                            </span>
+
+
+                            <strong>
+                                ₹<span id="display-available">
+                                    0.00
+                                </span>
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="metric">
+
+                            <span>
+                                Expected income
+                            </span>
+
+
+                            <strong>
+                                ₹<span id="display-income">
+                                    0.00
+                                </span>
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="metric">
+
+                            <span>
+                                Planned expenses
+                            </span>
+
+
+                            <strong>
+                                ₹<span id="display-expenses">
+                                    0.00
+                                </span>
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PROJECTED BALANCE -->
+
+                    <div class="projection-card">
+
+
+                        <div>
+
+                            <span>
+                                Projected balance
+                            </span>
+
+
+                            <strong>
+                                ₹<span id="display-balance">
+                                    0.00
+                                </span>
+                            </strong>
+
+                        </div>
+
+
+                        <div class="projection-meta">
+
+
+                            <div>
+
+                                <span>
+                                    Days remaining
+                                </span>
+
+
+                                <strong id="display-days">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+
+                            <div>
+
+                                <span>
+                                    Daily safe spending
+                                </span>
+
+
+                                <strong>
+                                    ₹<span id="display-daily">
+                                        0.00
+                                    </span>
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- RUNWAY STATUS -->
+
+                    <section
+                        class="status-card neutral"
+                        id="runway-status-card"
+                    >
+
+                        <p class="section-kicker">
+                            RUNWAY STATUS
+                        </p>
+
+
+                        <h3 id="runway-status-title">
+                            Add your plan to see your runway.
+                        </h3>
+
+
+                        <p id="runway-status-message">
+                            TermRunway will compare your available
+                            money and expected income with your
+                            planned expenses.
+                        </p>
+
+
+                        <p class="projected-note">
+
+                            Projected semester-end balance:
+
+                            <strong>
+                                ₹<span id="display-balance-secondary">
+                                    0.00
+                                </span>
+                            </strong>
+
+                        </p>
+
+                    </section>
+
+
+
+                    <!-- FINANCIAL HEALTH -->
+
+                    <section class="health-card">
+
+                        <div class="health-header">
+
+                            <div>
+
+                                <p class="section-kicker">
+                                    FINANCIAL HEALTH
+                                </p>
+
+
+                                <h3>
+                                    Plan health score
+                                </h3>
+
+                            </div>
+
+
+                            <strong id="health-score">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="score-track">
+
+                            <div
+                                id="score-bar"
+                                class="score-bar"
+                            ></div>
+
+                        </div>
+
+
+                        <p id="health-label">
+                            Add your plan to calculate
+                            your financial health.
+                        </p>
+
+                    </section>
+
+
+
+                    <!-- CHART 1 -->
+
+                    <section class="chart-card">
+
+                        <div class="chart-heading">
+
+                            <div>
+
+                                <p class="section-kicker">
+                                    CASH FLOW
+                                </p>
+
+
+                                <h3>
+                                    Income vs expenses
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="chart-box">
+
+                            <canvas
+                                id="cashflow-chart"
+                            ></canvas>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- CHART 2 -->
+
+                    <section class="chart-card">
+
+                        <div class="chart-heading">
+
+                            <div>
+
+                                <p class="section-kicker">
+                                    SPENDING
+                                </p>
+
+
+                                <h3>
+                                    Expense distribution
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="chart-box doughnut-box">
+
+                            <canvas
+                                id="expense-chart"
+                            ></canvas>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- CHART 3 -->
+
+                    <section class="chart-card">
+
+                        <div class="chart-heading">
+
+                            <div>
+
+                                <p class="section-kicker">
+                                    FORECAST
+                                </p>
+
+
+                                <h3>
+                                    Projected balance
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="chart-box">
+
+                            <canvas
+                                id="forecast-chart"
+                            ></canvas>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- SPENDING ANALYSIS -->
+
+                    <section class="analysis-card">
+
+                        <div class="analysis-header">
+
+                            <div>
+
+                                <p class="section-kicker">
+                                    SPENDING ANALYSIS
+                                </p>
+
+
+                                <h3>
+                                    Planned vs actual
+                                </h3>
+
+                            </div>
+
+
+                            <span id="analysis-total">
+                                ₹0.00
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            id="spending-analysis"
+                            class="analysis-list"
+                        >
+
+                            <p class="empty">
+                                Enter planned expenses
+                                to see the breakdown.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- ==================================================
+                         DECISION CENTER
+                    =================================================== -->
+
+                    <section
+                        class="decision-card"
+                        id="decisions"
+                    >
+
+                        <div class="card-heading">
+
+                            <p class="section-kicker">
+                                DECIDE
+                            </p>
+
+
+                            <h3>
+                                Can I afford this?
+                            </h3>
+
+
+                            <p>
+                                Test the impact of a planned
+                                purchase before making it.
+                            </p>
+
+                        </div>
+
+
+                        <div class="decision-form">
+
+
+                            <div class="input-group">
+
+                                <label for="purchase-name">
+                                    Purchase
+                                </label>
+
+
+                                <input
+                                    id="purchase-name"
+                                    type="text"
+                                    maxlength="80"
+                                    placeholder="New headphones"
+                                >
+
+                            </div>
+
+
+
+                            <div class="input-group">
+
+                                <label for="purchase-amount">
+
+                                    Price
+
+                                    <span>
+                                        ₹
+                                    </span>
+
+                                </label>
+
+
+                                <input
+                                    id="purchase-amount"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0"
+                                >
+
+                            </div>
+
+
+                            <button
+                                id="check-afford-btn"
+                                class="primary-btn"
+                                type="button"
+                            >
+                                Check Impact
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="affordability-result"
+                            class="result-box neutral"
+                        >
+
+                            <strong>
+                                Enter a purchase to test it.
+                            </strong>
+
+
+                            <span>
+                                TermRunway will compare the
+                                purchase with your projected balance.
+                            </span>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- ==================================================
+                         SAVINGS GOAL
+                    =================================================== -->
+
+                    <section class="goal-card">
+
+                        <div class="card-heading">
+
+                            <p class="section-kicker">
+                                GOAL
+                            </p>
+
+
+                            <h3>
+                                Savings goal
+                            </h3>
+
+
+                            <p>
+                                Track progress toward something
+                                important to you.
+                            </p>
+
+                        </div>
+
+
+                        <div class="goal-form">
+
+
+                            <div class="input-group">
+
+                                <label for="goal-name">
+                                    Goal
+                                </label>
+
+
+                                <input
+                                    id="goal-name"
+                                    type="text"
+                                    maxlength="60"
+                                    placeholder="Laptop"
+                                >
+
+                            </div>
+
+
+
+                            <div class="input-group">
+
+                                <label for="goal-target">
+
+                                    Target
+
+                                    <span>
+                                        ₹
+                                    </span>
+
+                                </label>
+
+
+                                <input
+                                    id="goal-target"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="50000"
+                                >
+
+                            </div>
+
+
+
+                            <div class="input-group">
+
+                                <label for="goal-current">
+
+                                    Current savings
+
+                                    <span>
+                                        ₹
+                                    </span>
+
+                                </label>
+
+
+                                <input
+                                    id="goal-current"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="18000"
+                                >
+
+                            </div>
+
+
+                            <button
+                                id="save-goal-btn"
+                                class="primary-btn"
+                                type="button"
+                            >
+                                Save Goal
+                            </button>
+
+                        </div>
+
+
+                        <div class="goal-display">
+
+                            <div class="goal-display-top">
+
+                                <div>
+
+                                    <span>
+                                        Goal
+                                    </span>
+
+
+                                    <strong id="goal-display-name">
+                                        No goal yet
+                                    </strong>
+
+                                </div>
+
+
+                                <strong id="goal-display-percent">
+                                    0%
+                                </strong>
+
+                            </div>
+
+
+                            <div class="goal-track">
+
+                                <div
+                                    id="goal-progress-bar"
+                                    class="goal-bar"
+                                ></div>
+
+                            </div>
+
+
+                            <div class="goal-meta">
+
+
+                                <div>
+
+                                    <span>
+                                        Remaining
+                                    </span>
+
+
+                                    <strong>
+                                        ₹<span id="goal-remaining">
+                                            0.00
+                                        </span>
+                                    </strong>
+
+                                </div>
+
+
+
+                                <div>
+
+                                    <span>
+                                        Required / month
+                                    </span>
+
+
+                                    <strong>
+                                        ₹<span id="goal-monthly">
+                                            0.00
+                                        </span>
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- ==================================================
+                         PRINT
+                    =================================================== -->
+
+                    <div class="dashboard-actions">
+
+                        <button
+                            id="download-btn"
+                            class="secondary-btn"
+                            type="button"
+                        >
+                            Print / PDF Summary
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
     </main>
 
+
+
+    <!-- ==================================================
+         FOOTER
+    =================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <p>
+                TermRunway • Built to help students make better
+                money decisions.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+
     <script src="js/script.js"></script>
+
 </body>
 </html>
