@@ -291,18 +291,34 @@ function daysBetween(startDate, endDate) {
 // 12. DAYS REMAINING
 // ==========================================================
 
-function getDaysRemaining(endDateValue) {
+function getDaysRemaining(
+    startDateValue,
+    endDateValue
+) {
 
-    const startDate = localToday();
+    const today = localToday();
 
-    const endDate = parseDate(endDateValue);
+    const planStart =
+        parseDate(startDateValue) ||
+        today;
 
-    if (!endDate) {
+    const endDate =
+        parseDate(endDateValue);
+
+    if (
+        !endDate ||
+        endDate <= planStart
+    ) {
         return 0;
     }
 
+    const effectiveStart =
+        planStart > today
+            ? planStart
+            : today;
+
     return daysBetween(
-        startDate,
+        effectiveStart,
         endDate
     );
 }
@@ -331,6 +347,7 @@ function getDaysRemaining(endDateValue) {
 
 function projectMonthlyAmount(
     monthlyAmount,
+    startDateValue,
     endDateValue
 ) {
 
@@ -338,7 +355,9 @@ function projectMonthlyAmount(
         return 0;
     }
 
-    const startDate = localToday();
+    const startDate =
+        parseDate(startDateValue) ||
+        localToday();
 
     const endDate = parseDate(
         endDateValue
@@ -516,6 +535,7 @@ function getExpenseTotal() {
 // ==========================================================
 
 function getPlannedCategories(
+    startDateValue,
     endDateValue
 ) {
 
@@ -529,6 +549,7 @@ function getPlannedCategories(
                 isMonthlyMode
                     ? projectMonthlyAmount(
                         entered,
+                        startDateValue,
                         endDateValue
                     )
                     : entered;
@@ -547,7 +568,20 @@ function getPlannedCategories(
 // 17. ACTUAL CATEGORY DATA
 // ==========================================================
 
-function getActualCategories() {
+function getActualCategories(
+    startDateValue,
+    endDateValue
+) {
+
+    const planStart =
+        parseDate(startDateValue) ||
+        localToday();
+
+    const planEnd =
+        parseDate(endDateValue);
+
+    const today =
+        localToday();
 
     return expenseFields.map(
         field => {
@@ -559,14 +593,33 @@ function getActualCategories() {
                         transaction
                     ) => {
 
+                        const transactionDate =
+                            parseDate(
+                                transaction.date
+                            );
+
+                        const isWithinPeriod =
+                            transactionDate &&
+                            transactionDate >= planStart &&
+                            planEnd &&
+                            transactionDate <= planEnd &&
+                            transactionDate <= today;
+
                         if (
                             transaction.category ===
-                            field.key
+                            field.key &&
+                            isWithinPeriod &&
+                            Number.isFinite(
+                                transaction.amount
+                            )
                         ) {
 
                             return (
                                 total +
-                                transaction.amount
+                                Math.max(
+                                    0,
+                                    transaction.amount
+                                )
                             );
                         }
 
@@ -590,16 +643,21 @@ function getActualCategories() {
 // ==========================================================
 
 function getCategoryRows(
+    startDateValue,
     endDateValue
 ) {
 
     const planned =
         getPlannedCategories(
+            startDateValue,
             endDateValue
         );
 
     const actual =
-        getActualCategories();
+        getActualCategories(
+            startDateValue,
+            endDateValue
+        );
 
 
     return planned.map(
@@ -659,8 +717,16 @@ function calculateModel() {
             "available-money"
         );
 
+    const startDateValue =
+        $("planning-start").value;
+
     const endDateValue =
         $("semester-end").value;
+
+    const startDate =
+        parseDate(
+            startDateValue
+        );
 
     const endDate =
         parseDate(
@@ -669,6 +735,7 @@ function calculateModel() {
 
     const daysRemaining =
         getDaysRemaining(
+            startDateValue,
             endDateValue
         );
 
@@ -694,6 +761,7 @@ function calculateModel() {
         expectedIncome =
             projectMonthlyAmount(
                 monthlyIncome,
+                startDateValue,
                 endDateValue
             );
 
@@ -701,6 +769,7 @@ function calculateModel() {
         plannedExpenses =
             projectMonthlyAmount(
                 monthlyExpenses,
+                startDateValue,
                 endDateValue
             );
 
@@ -785,6 +854,7 @@ function calculateModel() {
 
     const categoryRows =
         getCategoryRows(
+            startDateValue,
             endDateValue
         );
 
@@ -820,6 +890,10 @@ function calculateModel() {
         dailySafeSpending,
 
         daysRemaining,
+
+        startDate,
+
+        startDateValue,
 
         endDate,
 
@@ -1072,13 +1146,13 @@ function updateRunwayStatus(model) {
 
         setText(
             "runway-status-title",
-            "Add a valid future date."
+            "Add a valid planning period."
         );
 
 
         setText(
             "runway-status-message",
-            "Choose an end date so TermRunway can calculate your runway."
+            "Choose a From and To date so TermRunway can calculate your runway."
         );
 
 
@@ -2767,6 +2841,18 @@ window.addEventListener(
                 localToday()
             );
 
+        const planningStart =
+            $("planning-start");
+
+        if (
+            planningStart &&
+            !planningStart.value
+        ) {
+
+            planningStart.value =
+                today;
+
+        }
 
         const transactionDate =
             $("transaction-date");
@@ -2777,6 +2863,9 @@ window.addEventListener(
         ) {
 
             transactionDate.value =
+                today;
+
+            transactionDate.max =
                 today;
 
         }
