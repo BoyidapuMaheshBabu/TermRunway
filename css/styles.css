@@ -1861,7 +1861,7 @@ select:focus {
         16px;
 
     align-items:
-        start;
+        stretch;
 }
 
 
