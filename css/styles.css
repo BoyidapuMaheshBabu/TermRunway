@@ -1629,6 +1629,27 @@ select:focus {
 }
 
 
+/* Keep actual-expense entry compact on desktop.
+   The form uses two columns so its height stays
+   closer to the Planned vs Actual analysis block. */
+.tracker-form {
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    align-items:
+        end;
+}
+
+
+.tracker-form .primary-btn {
+    grid-column:
+        1 / -1;
+}
+
+
 .transaction-list {
     display:
         grid;
@@ -2326,7 +2347,8 @@ select:focus {
     .metric-grid,
     .dashboard-chart-grid,
     .dashboard-details-two-column,
-    .tracking-grid {
+    .tracking-grid,
+    .tracker-form {
         grid-template-columns:
             1fr;
     }
