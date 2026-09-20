@@ -318,6 +318,9 @@ button {
     padding:
         28px 0
         70px;
+
+    scroll-margin-top:
+        84px;
 }
 
 
@@ -327,10 +330,10 @@ button {
     gap: 18px;
 
     width:
-        min(
-            920px,
-            100%
-        );
+        100%;
+
+    max-width:
+        1180px;
 
     margin:
         0 auto;
@@ -355,6 +358,9 @@ button {
 
     width:
         100%;
+
+    scroll-margin-top:
+        84px;
 }
 
 
@@ -2061,6 +2067,9 @@ select:focus {
     padding:
         10px 0
         70px;
+
+    scroll-margin-top:
+        84px;
 
     border-top:
         1px solid
