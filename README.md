@@ -11,10 +11,11 @@
 - Semester and monthly budgeting
 - Multiple income sources and expense categories
 - Automatic balance and daily spending-limit calculations
-- 50/30/20 budgeting reference
 - Browser-based persistence with `localStorage`
 - Input validation and edge-case handling
 - Responsive mobile, tablet, and desktop layouts
+- Progressive planning and dashboard workflow
+- Edit and reset controls with confirmation
 - Print / PDF-friendly budget summary
 
 ## 💡 What It Does
@@ -73,8 +74,10 @@ The project is **not presented as line-by-line manual coding without AI assistan
 ```text
 TermRunway/
 ├── index.html
+├── home.html
 ├── css/
-│   └── styles.css
+│   ├── styles.css
+│   └── home.css
 ├── js/
 │   └── script.js
 └── README.md
@@ -92,6 +95,9 @@ Examples of issues addressed include:
 - numeric input validation
 - desktop layout problems
 - mobile responsiveness
+- progressive planning/results flow
+- planned vs actual tracking layout
+- reset confirmation and saved-state handling
 - print/PDF layout
 
 ## 🔮 Roadmap
@@ -99,7 +105,6 @@ Examples of issues addressed include:
 Planned improvements may include:
 
 - more detailed budget analytics
-- deeper budget analytics
 - additional export options
 - accessibility improvements
 - more student-focused planning tools

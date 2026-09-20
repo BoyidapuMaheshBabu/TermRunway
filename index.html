@@ -10,219 +10,137 @@
 
     <meta
         name="description"
-        content="TermRunway is a student financial planning dashboard for semester runway, spending analysis, decisions and savings goals."
+        content="TermRunway is a student financial planning dashboard for planning, tracking spending, forecasting a runway, testing decisions, and tracking savings goals."
     >
 
-    <title>
-        TermRunway — Student Financial Planner
-    </title>
+    <title>TermRunway — Student Financial Planner</title>
 
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
 
-    <!-- Chart.js -->
     <script
         src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
     ></script>
 
-    <link
-        rel="stylesheet"
-        href="css/styles.css"
-    >
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-
 
 <body>
 
-    <!-- ==================================================
-         HEADER
-    =================================================== -->
-
     <header class="site-header">
-
         <div class="container header-inner">
 
-            <a
-                class="brand"
-                href="#top"
-            >
+            <a class="brand" href="home.html">
                 TermRunway
             </a>
 
-
-            <nav
-                class="nav-links"
-                aria-label="Primary navigation"
-            >
-
-                <a href="#planner">
-                    Plan
-                </a>
-
-                <a href="#dashboard">
-                    Dashboard
-                </a>
-
-                <a href="#tracker">
-                    Track
-                </a>
-
-                <a href="#decisions">
-                    Decide
-                </a>
-
+            <nav class="nav-links" aria-label="Primary navigation">
+                <a href="home.html">Home</a>
+                <a href="#planner">Plan</a>
+                <a href="#runway-summary">Dashboard</a>
+                <a href="#tracking">Track</a>
+                <a href="#decisions">Decide</a>
             </nav>
 
         </div>
-
     </header>
 
 
-
-    <!-- ==================================================
-         MAIN
-    =================================================== -->
-
     <main id="top">
 
-
-        <!-- ==================================================
-             HERO
-        =================================================== -->
-
+        <!-- INTRODUCTION -->
         <section class="hero">
-
             <div class="container hero-grid">
 
-
                 <div>
-
                     <p class="eyebrow">
                         STUDENT FINANCIAL PLANNING
                     </p>
-
 
                     <h1>
                         Know where your money is going.
                         Know whether it will last.
                     </h1>
 
-
                     <p class="hero-copy">
-                        Plan your semester, monitor spending,
-                        test financial decisions, and understand
-                        your projected balance from one dashboard.
+                        Build a plan first. Then use the runway summary,
+                        dashboard, tracking, decisions, and savings tools
+                        to understand what your money can support.
                     </p>
-
                 </div>
 
-
-
                 <div class="hero-note">
-
                     <span class="hero-note-label">
                         CORE QUESTION
                     </span>
-
 
                     <strong>
                         Will my money last until the end of my plan?
                     </strong>
 
-
                     <span>
-                        TermRunway turns your inputs into a forecast
-                        instead of showing only a total.
+                        TermRunway reveals the financial picture only after
+                        you create and update a plan.
                     </span>
-
                 </div>
 
             </div>
-
         </section>
 
 
-
-        <!-- ==================================================
-             APP
-        =================================================== -->
-
+        <!-- PLANNER + RUNWAY SUMMARY -->
         <section
             class="container app-layout"
             id="planner"
+            data-view-mode="planning"
         >
-
-
-            <!-- ==================================================
-                 PLANNER COLUMN
-            =================================================== -->
 
             <div class="planner-column">
 
-
-                <!-- ==================================================
-                     STEP 1 — MODE
-                =================================================== -->
-
+                <!-- STEP 1 -->
                 <section class="card">
 
                     <div class="card-title-row">
 
                         <div>
-
                             <p class="section-kicker">
                                 STEP 1
                             </p>
-
 
                             <h2>
                                 Choose your planning method
                             </h2>
 
-
-                            <p id="mode-description">
-                                Enter amounts that cover your whole semester.
+                            <p id="planning-method-description">
+                                Enter amounts that cover your whole planning period.
                             </p>
-
                         </div>
-
 
                         <div
                             class="mode-toggle"
                             role="group"
                             aria-label="Planning method"
                         >
-
                             <button
-                                id="btn-semester"
+                                id="planning-semester"
                                 class="mode-btn active"
                                 type="button"
                             >
                                 Semester
                             </button>
 
-
                             <button
-                                id="btn-monthly"
+                                id="planning-monthly"
                                 class="mode-btn"
                                 type="button"
                             >
                                 Monthly
                             </button>
-
                         </div>
 
                     </div>
@@ -230,45 +148,29 @@
                 </section>
 
 
-
-                <!-- ==================================================
-                     STEP 2 — MONEY AVAILABLE
-                =================================================== -->
-
+                <!-- STEP 2 -->
                 <section class="card">
 
                     <div class="card-heading">
-
                         <p class="section-kicker">
                             STEP 2
                         </p>
-
 
                         <h2>
                             Money available now
                         </h2>
 
-
                         <p>
-                            This is money already available today.
-                            It is never multiplied by the number of months.
+                            Enter the money already available today.
+                            This amount is never multiplied by the number of months.
                         </p>
-
                     </div>
 
-
                     <div class="input-group full">
-
                         <label for="available-money">
-
                             Available money now
-
-                            <span>
-                                ₹
-                            </span>
-
+                            <span>₹</span>
                         </label>
-
 
                         <input
                             id="available-money"
@@ -278,52 +180,35 @@
                             inputmode="decimal"
                             placeholder="0"
                         >
-
                     </div>
 
                 </section>
 
 
-
-                <!-- ==================================================
-                     STEP 3 — INCOME
-                =================================================== -->
-
+                <!-- STEP 3 -->
                 <section class="card">
 
                     <div class="card-heading">
-
                         <p class="section-kicker">
                             STEP 3
                         </p>
-
 
                         <h2>
                             Expected income
                         </h2>
 
-
-                        <p id="income-desc">
-                            Enter income you expect to receive during
-                            the semester.
+                        <p id="income-description">
+                            Add income you expect to receive during the planning period.
                         </p>
-
                     </div>
-
 
                     <div class="field-grid">
 
-
                         <div class="input-group">
-
                             <label for="income-scholarship">
-
                                 Scholarship
-
                                 <span>₹</span>
-
                             </label>
-
 
                             <input
                                 id="income-scholarship"
@@ -332,21 +217,13 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
                             <label for="income-part-time">
-
                                 Part-time job
-
                                 <span>₹</span>
-
                             </label>
-
 
                             <input
                                 id="income-part-time"
@@ -355,21 +232,13 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
                             <label for="income-parents">
-
                                 Parents support
-
                                 <span>₹</span>
-
                             </label>
-
 
                             <input
                                 id="income-parents"
@@ -378,21 +247,13 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
                             <label for="income-freelance">
-
                                 Freelance / gigs
-
                                 <span>₹</span>
-
                             </label>
-
 
                             <input
                                 id="income-freelance"
@@ -401,21 +262,13 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
                             <label for="income-other">
-
                                 Other income
-
                                 <span>₹</span>
-
                             </label>
-
 
                             <input
                                 id="income-other"
@@ -424,7 +277,6 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
                     </div>
@@ -432,45 +284,45 @@
                 </section>
 
 
-
-                <!-- ==================================================
-                     STEP 4 — EXPENSES
-                =================================================== -->
-
+                <!-- STEP 4 -->
                 <section class="card">
 
                     <div class="card-heading">
-
                         <p class="section-kicker">
                             STEP 4
                         </p>
-
 
                         <h2>
                             Planned expenses
                         </h2>
 
-
-                        <p id="expense-desc">
-                            Enter your estimated expenses for the semester.
+                        <p id="expense-description">
+                            Enter your total budget for the planning period.
                         </p>
-
                     </div>
-
 
                     <div class="field-grid">
 
-
                         <div class="input-group">
-
-                            <label for="expense-rent">
-
-                                Rent / hostel
-
+                            <label for="expense-tuition">
+                                Tuition &amp; fees
                                 <span>₹</span>
-
                             </label>
 
+                            <input
+                                id="expense-tuition"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+                        </div>
+
+                        <div class="input-group">
+                            <label for="expense-rent">
+                                Rent &amp; housing
+                                <span>₹</span>
+                            </label>
 
                             <input
                                 id="expense-rent"
@@ -479,21 +331,13 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
                             <label for="expense-food">
-
-                                Food
-
+                                Food &amp; groceries
                                 <span>₹</span>
-
                             </label>
-
 
                             <input
                                 id="expense-food"
@@ -502,44 +346,13 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
-                            <label for="expense-transport">
-
-                                Transport
-
-                                <span>₹</span>
-
-                            </label>
-
-
-                            <input
-                                id="expense-transport"
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                placeholder="0"
-                            >
-
-                        </div>
-
-
-
-                        <div class="input-group">
-
                             <label for="expense-utilities">
-
-                                Utilities
-
+                                Utilities &amp; internet
                                 <span>₹</span>
-
                             </label>
-
 
                             <input
                                 id="expense-utilities"
@@ -548,21 +361,43 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
-                            <label for="expense-entertainment">
-
-                                Entertainment
-
+                            <label for="expense-transport">
+                                Transport &amp; travel
                                 <span>₹</span>
-
                             </label>
 
+                            <input
+                                id="expense-transport"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+                        </div>
+
+                        <div class="input-group">
+                            <label for="expense-books">
+                                Books &amp; academic supplies
+                                <span>₹</span>
+                            </label>
+
+                            <input
+                                id="expense-books"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                            >
+                        </div>
+
+                        <div class="input-group">
+                            <label for="expense-entertainment">
+                                Personal &amp; lifestyle
+                                <span>₹</span>
+                            </label>
 
                             <input
                                 id="expense-entertainment"
@@ -571,30 +406,21 @@
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
-
-
                         <div class="input-group">
-
-                            <label for="expense-other">
-
-                                Other expenses
-
+                            <label for="expense-misc">
+                                Miscellaneous / contingency
                                 <span>₹</span>
-
                             </label>
 
-
                             <input
-                                id="expense-other"
+                                id="expense-misc"
                                 type="number"
                                 min="0"
                                 step="0.01"
                                 placeholder="0"
                             >
-
                         </div>
 
                     </div>
@@ -602,62 +428,45 @@
                 </section>
 
 
-
-                <!-- ==================================================
-                     STEP 5 — TIMELINE
-                =================================================== -->
-
+                <!-- STEP 5 -->
                 <section class="card">
 
                     <div class="card-heading">
-
                         <p class="section-kicker">
                             STEP 5
                         </p>
-
 
                         <h2>
                             Set your timeline
                         </h2>
 
-
                         <p>
-                            Your forecast is calculated against this
-                            future date.
+                            The runway forecast is calculated against this planning window.
                         </p>
-
                     </div>
-
 
                     <div class="field-grid">
 
                         <div class="input-group">
-
-                            <label for="planning-start">
+                            <label for="planning-from-date">
                                 From date
                             </label>
 
-
                             <input
-                                id="planning-start"
+                                id="planning-from-date"
                                 type="date"
                             >
-
                         </div>
 
-
                         <div class="input-group">
-
-                            <label for="semester-end">
+                            <label for="planning-to-date">
                                 To date
                             </label>
 
-
                             <input
-                                id="semester-end"
+                                id="planning-to-date"
                                 type="date"
                             >
-
                         </div>
 
                     </div>
@@ -665,24 +474,18 @@
                 </section>
 
 
-
-                <!-- ==================================================
-                     ACTIONS
-                =================================================== -->
-
                 <div class="action-row">
 
                     <button
-                        id="calculate-btn"
+                        id="update-runway-btn"
                         class="primary-btn"
                         type="button"
                     >
                         Update My Runway
                     </button>
 
-
                     <button
-                        id="reset-btn"
+                        id="reset-runway-btn"
                         class="secondary-btn"
                         type="button"
                     >
@@ -691,325 +494,173 @@
 
                 </div>
 
-
                 <p
-                    id="validation-message"
+                    id="planner-validation"
                     class="validation"
                     aria-live="polite"
                 ></p>
 
-
-
-                <!-- ==================================================
-                     ACTUAL EXPENSE TRACKER
-                =================================================== -->
-
-                <section
-                    class="card"
-                    id="tracker"
-                >
-
-                    <div class="card-heading">
-
-                        <p class="section-kicker">
-                            TRACK
-                        </p>
-
-
-                        <h2>
-                            Record an actual expense
-                        </h2>
-
-
-                        <p>
-                            Compare what you planned with
-                            what you actually spent.
-                        </p>
-
-                    </div>
-
-
-                    <div class="tracker-form">
-
-
-                        <div class="input-group">
-
-                            <label for="transaction-date">
-                                Date
-                            </label>
-
-                            <input
-                                id="transaction-date"
-                                type="date"
-                            >
-
-                        </div>
-
-
-
-                        <div class="input-group">
-
-                            <label for="transaction-category">
-                                Category
-                            </label>
-
-
-                            <select
-                                id="transaction-category"
-                            >
-
-                                <option value="rent">
-                                    Rent / hostel
-                                </option>
-
-                                <option value="food">
-                                    Food
-                                </option>
-
-                                <option value="transport">
-                                    Transport
-                                </option>
-
-                                <option value="utilities">
-                                    Utilities
-                                </option>
-
-                                <option value="entertainment">
-                                    Entertainment
-                                </option>
-
-                                <option value="other">
-                                    Other expenses
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-
-                        <div class="input-group">
-
-                            <label for="transaction-description">
-                                Description
-                            </label>
-
-
-                            <input
-                                id="transaction-description"
-                                type="text"
-                                maxlength="80"
-                                placeholder="Lunch, bus pass..."
-                            >
-
-                        </div>
-
-
-
-                        <div class="input-group">
-
-                            <label for="transaction-amount">
-
-                                Amount
-
-                                <span>₹</span>
-
-                            </label>
-
-
-                            <input
-                                id="transaction-amount"
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                placeholder="0"
-                            >
-
-                        </div>
-
-
-                        <button
-                            id="add-transaction-btn"
-                            class="primary-btn"
-                            type="button"
-                        >
-                            Add Expense
-                        </button>
-
-                    </div>
-
-
-                    <div
-                        id="transaction-list"
-                        class="transaction-list"
-                    ></div>
-
-                </section>
-
             </div>
 
 
-
-            <!-- ==================================================
-                 DASHBOARD
-            =================================================== -->
-
+            <!-- RUNWAY SUMMARY — REVEALED AFTER A VALID PLAN -->
             <aside
-                class="dashboard-column"
-                id="dashboard"
+                class="dashboard-column is-hidden"
+                id="runway-summary"
+                aria-hidden="true"
             >
 
                 <div class="dashboard-card">
 
-
-                    <!-- DASHBOARD HEADER -->
-
                     <div class="dashboard-header">
 
                         <div>
-
                             <p class="section-kicker">
                                 YOUR RUNWAY
                             </p>
 
-
                             <h2>
                                 Financial dashboard
                             </h2>
-
                         </div>
 
+                        <div class="dashboard-header-actions">
 
-                        <span
-                            id="status-pill"
-                            class="status-pill neutral"
-                        >
-                            Waiting for plan
-                        </span>
+                            <button
+                                id="edit-plan-btn"
+                                class="secondary-btn"
+                                type="button"
+                            >
+                                Edit Plan
+                            </button>
+
+                            <button
+                                id="dashboard-reset-btn"
+                                class="secondary-btn"
+                                type="button"
+                            >
+                                Reset Plan
+                            </button>
+
+                            <span
+                                id="runway-status-pill"
+                                class="status-pill neutral"
+                            >
+                                Waiting for plan
+                            </span>
+
+                        </div>
 
                     </div>
 
 
+                    <section
+                        class="plan-summary"
+                        aria-labelledby="plan-summary-title"
+                    >
 
-                    <!-- MAIN METRICS -->
+                        <div class="plan-summary-heading">
+
+                            <div>
+                                <p class="section-kicker">
+                                    PLAN SUMMARY
+                                </p>
+
+                                <h3 id="plan-summary-title">
+                                    Current planning setup
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        <div class="plan-summary-grid">
+
+                            <div>
+                                <span>
+                                    Planning method
+                                </span>
+
+                                <strong id="plan-summary-method">
+                                    Semester
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Planning period
+                                </span>
+
+                                <strong id="plan-summary-period">
+                                    —
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </section>
+
 
                     <div class="metric-grid">
 
-
                         <div class="metric">
-
-                            <span>
-                                Available now
-                            </span>
-
+                            <span>Available now</span>
 
                             <strong>
-                                ₹<span id="display-available">
-                                    0.00
-                                </span>
+                                ₹<span id="display-available">0.00</span>
                             </strong>
-
                         </div>
 
-
-
                         <div class="metric">
-
-                            <span>
-                                Expected income
-                            </span>
-
+                            <span>Expected income</span>
 
                             <strong>
-                                ₹<span id="display-income">
-                                    0.00
-                                </span>
+                                ₹<span id="display-income">0.00</span>
                             </strong>
-
                         </div>
 
-
-
                         <div class="metric">
-
-                            <span>
-                                Planned expenses
-                            </span>
-
+                            <span>Planned expenses</span>
 
                             <strong>
-                                ₹<span id="display-expenses">
-                                    0.00
-                                </span>
+                                ₹<span id="display-expenses">0.00</span>
                             </strong>
-
                         </div>
 
                     </div>
 
 
-
-                    <!-- PROJECTED BALANCE -->
-
                     <div class="projection-card">
 
-
                         <div>
-
-                            <span>
-                                Projected balance
-                            </span>
-
+                            <span>Projected balance</span>
 
                             <strong>
-                                ₹<span id="display-balance">
-                                    0.00
-                                </span>
+                                ₹<span id="display-balance">0.00</span>
                             </strong>
-
                         </div>
-
 
                         <div class="projection-meta">
 
-
                             <div>
-
-                                <span>
-                                    Days remaining
-                                </span>
-
+                                <span>Days remaining</span>
 
                                 <strong id="display-days">
                                     —
                                 </strong>
-
                             </div>
 
-
-
                             <div>
-
-                                <span>
-                                    Daily safe spending
-                                </span>
-
+                                <span>Daily safe spending</span>
 
                                 <strong>
-                                    ₹<span id="display-daily">
-                                        0.00
-                                    </span>
+                                    ₹<span id="display-daily">0.00</span>
                                 </strong>
-
                             </div>
 
                         </div>
 
                     </div>
 
-
-
-                    <!-- RUNWAY STATUS -->
 
                     <section
                         class="status-card neutral"
@@ -1020,54 +671,41 @@
                             RUNWAY STATUS
                         </p>
 
-
                         <h3 id="runway-status-title">
                             Add your plan to see your runway.
                         </h3>
 
-
                         <p id="runway-status-message">
-                            TermRunway will compare your available
-                            money and expected income with your
-                            planned expenses.
+                            TermRunway will compare your available money,
+                            expected income, and remaining planned costs.
                         </p>
 
-
                         <p class="projected-note">
-
-                            Projected semester-end balance:
+                            Projected planning-period balance:
 
                             <strong>
                                 ₹<span id="display-balance-secondary">
                                     0.00
                                 </span>
                             </strong>
-
                         </p>
 
                     </section>
 
-
-
-                    <!-- FINANCIAL HEALTH -->
 
                     <section class="health-card">
 
                         <div class="health-header">
 
                             <div>
-
                                 <p class="section-kicker">
                                     FINANCIAL HEALTH
                                 </p>
 
-
                                 <h3>
                                     Plan health score
                                 </h3>
-
                             </div>
-
 
                             <strong id="health-score">
                                 0
@@ -1075,174 +713,315 @@
 
                         </div>
 
-
                         <div class="score-track">
-
                             <div
                                 id="score-bar"
                                 class="score-bar"
                             ></div>
-
                         </div>
 
-
                         <p id="health-label">
-                            Add your plan to calculate
-                            your financial health.
+                            Add your plan to calculate your financial health.
                         </p>
 
                     </section>
 
+                </div>
+
+            </aside>
+
+        </section>
 
 
-                    <!-- CHART 1 -->
+        <!-- DETAILED RESULTS — REVEALED AFTER A VALID PLAN -->
+        <section
+            class="dashboard-details is-hidden"
+            id="dashboard-details"
+            aria-hidden="true"
+        >
+
+            <div class="container">
+
+                <div class="dashboard-details-header">
+
+                    <div>
+                        <p class="section-kicker">
+                            DETAILED DASHBOARD
+                        </p>
+
+                        <h2>
+                            See the financial picture behind your runway
+                        </h2>
+
+                        <p>
+                            These detailed views use the same plan shown in the runway summary.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-chart-grid">
 
                     <section class="chart-card">
 
                         <div class="chart-heading">
 
                             <div>
-
                                 <p class="section-kicker">
                                     CASH FLOW
                                 </p>
 
-
                                 <h3>
                                     Income vs expenses
                                 </h3>
-
                             </div>
 
                         </div>
 
-
                         <div class="chart-box">
-
-                            <canvas
-                                id="cashflow-chart"
-                            ></canvas>
-
+                            <canvas id="cashflow-chart"></canvas>
                         </div>
 
                     </section>
 
-
-
-                    <!-- CHART 2 -->
 
                     <section class="chart-card">
 
                         <div class="chart-heading">
 
                             <div>
-
                                 <p class="section-kicker">
                                     SPENDING
                                 </p>
 
-
                                 <h3>
                                     Expense distribution
                                 </h3>
-
                             </div>
 
                         </div>
 
-
                         <div class="chart-box doughnut-box">
-
-                            <canvas
-                                id="expense-chart"
-                            ></canvas>
-
+                            <canvas id="expense-chart"></canvas>
                         </div>
 
                     </section>
 
-
-
-                    <!-- CHART 3 -->
 
                     <section class="chart-card">
 
                         <div class="chart-heading">
 
                             <div>
-
                                 <p class="section-kicker">
                                     FORECAST
                                 </p>
 
-
                                 <h3>
                                     Projected balance
                                 </h3>
-
                             </div>
 
                         </div>
-
 
                         <div class="chart-box">
-
-                            <canvas
-                                id="forecast-chart"
-                            ></canvas>
-
+                            <canvas id="forecast-chart"></canvas>
                         </div>
 
                     </section>
 
+                </div>
 
 
-                    <!-- SPENDING ANALYSIS -->
+                <!-- PLANNED VS ACTUAL -->
+                <section
+                    class="tracking-card"
+                    id="tracking"
+                >
 
-                    <section class="analysis-card">
+                    <div class="tracking-header">
 
-                        <div class="analysis-header">
+                        <div>
+                            <p class="section-kicker">
+                                TRACK
+                            </p>
 
-                            <div>
+                            <h2>
+                                Planned vs actual spending
+                            </h2>
+
+                            <p>
+                                Record actual expenses and compare them with the plan.
+                            </p>
+                        </div>
+
+                        <span
+                            id="transaction-count"
+                            class="tracking-count"
+                        >
+                            0 active entries
+                        </span>
+
+                    </div>
+
+
+                    <div class="tracking-grid">
+
+                        <section class="tracker-panel">
+
+                            <div class="card-heading">
 
                                 <p class="section-kicker">
-                                    SPENDING ANALYSIS
+                                    ADD AN ACTUAL EXPENSE
                                 </p>
 
-
                                 <h3>
-                                    Planned vs actual
+                                    Record spending
                                 </h3>
+
+                                <p>
+                                    Add an expense inside your planning period.
+                                </p>
 
                             </div>
 
 
-                            <span id="analysis-total">
-                                ₹0.00
-                            </span>
+                            <div class="tracker-form">
 
-                        </div>
+                                <div class="input-group">
+                                    <label for="transaction-date">
+                                        Date
+                                    </label>
+
+                                    <input
+                                        id="transaction-date"
+                                        type="date"
+                                    >
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="transaction-category">
+                                        Category
+                                    </label>
+
+                                    <select id="transaction-category">
+
+                                        <option value="tuition">
+                                            Tuition &amp; fees
+                                        </option>
+
+                                        <option value="rent">
+                                            Rent &amp; housing
+                                        </option>
+
+                                        <option value="food">
+                                            Food &amp; groceries
+                                        </option>
+
+                                        <option value="utilities">
+                                            Utilities &amp; internet
+                                        </option>
+
+                                        <option value="transport">
+                                            Transport &amp; travel
+                                        </option>
+
+                                        <option value="books">
+                                            Books &amp; academic supplies
+                                        </option>
+
+                                        <option value="entertainment">
+                                            Personal &amp; lifestyle
+                                        </option>
+
+                                        <option value="misc">
+                                            Miscellaneous / contingency
+                                        </option>
+
+                                    </select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="transaction-description">
+                                        Description
+                                    </label>
+
+                                    <input
+                                        id="transaction-description"
+                                        type="text"
+                                        maxlength="80"
+                                        placeholder="Lunch, bus pass..."
+                                    >
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="transaction-amount">
+                                        Amount
+                                        <span>₹</span>
+                                    </label>
+
+                                    <input
+                                        id="transaction-amount"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0"
+                                    >
+                                </div>
+
+                                <button
+                                    id="add-transaction-btn"
+                                    class="primary-btn"
+                                    type="button"
+                                >
+                                    Add Expense
+                                </button>
+
+                            </div>
+
+                            <div
+                                id="transaction-list"
+                                class="transaction-list"
+                            ></div>
+
+                        </section>
 
 
-                        <div
-                            id="spending-analysis"
-                            class="analysis-list"
-                        >
+                        <section class="analysis-card">
 
-                            <p class="empty">
-                                Enter planned expenses
-                                to see the breakdown.
-                            </p>
+                            <div class="analysis-header">
 
-                        </div>
+                                <div>
+                                    <p class="section-kicker">
+                                        SPENDING ANALYSIS
+                                    </p>
 
-                    </section>
+                                    <h3>
+                                        Planned vs actual
+                                    </h3>
+                                </div>
+
+                                <span id="analysis-total">
+                                    ₹0.00
+                                </span>
+
+                            </div>
+
+                            <div
+                                id="spending-analysis"
+                                class="analysis-list"
+                            ></div>
+
+                        </section>
+
+                    </div>
+
+                </section>
 
 
-
-                    <!-- ==================================================
-                         DECISION CENTER
-                    =================================================== -->
+                <!-- DECIDE + GOAL -->
+                <div class="dashboard-details-two-column">
 
                     <section
                         class="decision-card"
@@ -1255,15 +1034,12 @@
                                 DECIDE
                             </p>
 
-
                             <h3>
                                 Can I afford this?
                             </h3>
 
-
                             <p>
-                                Test the impact of a planned
-                                purchase before making it.
+                                Test the impact of a planned purchase before making it.
                             </p>
 
                         </div>
@@ -1271,13 +1047,10 @@
 
                         <div class="decision-form">
 
-
                             <div class="input-group">
-
                                 <label for="purchase-name">
                                     Purchase
                                 </label>
-
 
                                 <input
                                     id="purchase-name"
@@ -1285,23 +1058,13 @@
                                     maxlength="80"
                                     placeholder="New headphones"
                                 >
-
                             </div>
 
-
-
                             <div class="input-group">
-
                                 <label for="purchase-amount">
-
                                     Price
-
-                                    <span>
-                                        ₹
-                                    </span>
-
+                                    <span>₹</span>
                                 </label>
-
 
                                 <input
                                     id="purchase-amount"
@@ -1310,9 +1073,7 @@
                                     step="0.01"
                                     placeholder="0"
                                 >
-
                             </div>
-
 
                             <button
                                 id="check-afford-btn"
@@ -1334,10 +1095,9 @@
                                 Enter a purchase to test it.
                             </strong>
 
-
                             <span>
-                                TermRunway will compare the
-                                purchase with your projected balance.
+                                TermRunway will compare the purchase
+                                with your projected balance.
                             </span>
 
                         </div>
@@ -1345,12 +1105,10 @@
                     </section>
 
 
-
-                    <!-- ==================================================
-                         SAVINGS GOAL
-                    =================================================== -->
-
-                    <section class="goal-card">
+                    <section
+                        class="goal-card"
+                        id="goal"
+                    >
 
                         <div class="card-heading">
 
@@ -1358,15 +1116,12 @@
                                 GOAL
                             </p>
 
-
                             <h3>
                                 Savings goal
                             </h3>
 
-
                             <p>
-                                Track progress toward something
-                                important to you.
+                                Track progress toward something important to you.
                             </p>
 
                         </div>
@@ -1374,13 +1129,10 @@
 
                         <div class="goal-form">
 
-
                             <div class="input-group">
-
                                 <label for="goal-name">
                                     Goal
                                 </label>
-
 
                                 <input
                                     id="goal-name"
@@ -1388,23 +1140,13 @@
                                     maxlength="60"
                                     placeholder="Laptop"
                                 >
-
                             </div>
 
-
-
                             <div class="input-group">
-
                                 <label for="goal-target">
-
                                     Target
-
-                                    <span>
-                                        ₹
-                                    </span>
-
+                                    <span>₹</span>
                                 </label>
-
 
                                 <input
                                     id="goal-target"
@@ -1413,23 +1155,13 @@
                                     step="0.01"
                                     placeholder="50000"
                                 >
-
                             </div>
 
-
-
                             <div class="input-group">
-
                                 <label for="goal-current">
-
                                     Current savings
-
-                                    <span>
-                                        ₹
-                                    </span>
-
+                                    <span>₹</span>
                                 </label>
-
 
                                 <input
                                     id="goal-current"
@@ -1438,9 +1170,7 @@
                                     step="0.01"
                                     placeholder="18000"
                                 >
-
                             </div>
-
 
                             <button
                                 id="save-goal-btn"
@@ -1458,18 +1188,14 @@
                             <div class="goal-display-top">
 
                                 <div>
-
                                     <span>
                                         Goal
                                     </span>
 
-
                                     <strong id="goal-display-name">
                                         No goal yet
                                     </strong>
-
                                 </div>
-
 
                                 <strong id="goal-display-percent">
                                     0%
@@ -1490,37 +1216,28 @@
 
                             <div class="goal-meta">
 
-
                                 <div>
-
                                     <span>
                                         Remaining
                                     </span>
-
 
                                     <strong>
                                         ₹<span id="goal-remaining">
                                             0.00
                                         </span>
                                     </strong>
-
                                 </div>
 
-
-
                                 <div>
-
                                     <span>
                                         Required / month
                                     </span>
-
 
                                     <strong>
                                         ₹<span id="goal-monthly">
                                             0.00
                                         </span>
                                     </strong>
-
                                 </div>
 
                             </div>
@@ -1529,51 +1246,37 @@
 
                     </section>
 
+                </div>
 
 
-                    <!-- ==================================================
-                         PRINT
-                    =================================================== -->
+                <div class="dashboard-actions">
 
-                    <div class="dashboard-actions">
-
-                        <button
-                            id="download-btn"
-                            class="secondary-btn"
-                            type="button"
-                        >
-                            Print / PDF Summary
-                        </button>
-
-                    </div>
+                    <button
+                        id="download-btn"
+                        class="secondary-btn"
+                        type="button"
+                    >
+                        Print / PDF Summary
+                    </button>
 
                 </div>
 
-            </aside>
+            </div>
 
         </section>
 
     </main>
 
 
-
-    <!-- ==================================================
-         FOOTER
-    =================================================== -->
-
     <footer class="site-footer">
 
         <div class="container">
-
             <p>
-                TermRunway • Built to help students make better
-                money decisions.
+                TermRunway • Built to help students make better money decisions.
             </p>
-
         </div>
 
     </footer>
-
 
 
     <script src="js/script.js"></script>
