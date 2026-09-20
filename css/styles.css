@@ -1752,6 +1752,145 @@ select:focus {
 
 
 /* ==================================================
+   PROGRESSIVE DISCLOSURE
+================================================== */
+
+.is-hidden {
+    display:
+        none !important;
+}
+
+
+/* ==================================================
+   PLANNED VS ACTUAL TRACKING
+================================================== */
+
+.tracking-card {
+    margin-top:
+        16px;
+
+    padding:
+        20px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        16px;
+
+    background:
+        #ffffff;
+}
+
+
+.tracking-header {
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    margin-bottom:
+        18px;
+}
+
+
+.tracking-header h2 {
+    margin:
+        0;
+
+    font-size:
+        1.1rem;
+
+    letter-spacing:
+        -0.02em;
+}
+
+
+.tracking-header p:last-child {
+    max-width:
+        720px;
+
+    margin:
+        7px 0 0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.8rem;
+}
+
+
+.tracking-count {
+    color:
+        var(--muted);
+
+    font-size:
+        0.74rem;
+
+    white-space:
+        nowrap;
+}
+
+
+.tracking-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(300px, 0.82fr)
+        minmax(0, 1.18fr);
+
+    gap:
+        16px;
+
+    align-items:
+        stretch;
+}
+
+
+.tracker-panel {
+    min-width:
+        0;
+
+    padding:
+        18px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--surface-soft);
+}
+
+
+.tracker-panel
+.card-heading {
+    margin-bottom:
+        16px;
+}
+
+
+.tracking-grid
+.analysis-card {
+    margin-top:
+        0;
+}
+
+
+/* ==================================================
    DASHBOARD DETAILS — FULL WIDTH
 ================================================== */
 
@@ -1997,7 +2136,8 @@ select:focus {
     .field-grid,
     .metric-grid,
     .dashboard-chart-grid,
-    .dashboard-details-two-column {
+    .dashboard-details-two-column,
+    .tracking-grid {
         grid-template-columns:
             1fr;
     }
@@ -2032,6 +2172,18 @@ select:focus {
     .dashboard-header {
         flex-direction:
             column;
+    }
+
+
+    .tracking-header {
+        flex-direction:
+            column;
+    }
+
+
+    .tracking-count {
+        white-space:
+            normal;
     }
 
 
