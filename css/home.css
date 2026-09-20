@@ -1,17 +1,9 @@
-:root {
-    --home-bg: #f7f9fc;
-    --home-surface: #ffffff;
-    --home-surface-soft: #f3f6fb;
-    --home-text: #101828;
-    --home-muted: #667085;
-    --home-border: #e4e7ec;
-    --home-primary: #2563eb;
-    --home-primary-dark: #1d4ed8;
-    --home-success: #059669;
-    --home-danger: #dc2626;
-    --home-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
-    --home-shadow-soft: 0 10px 24px rgba(16, 24, 40, 0.05);
-}
+/* =========================================================
+   TERM RUNWAY — HOMEPAGE STYLES
+
+   Shared visual tokens live in css/theme.css.
+   This file owns homepage layout and components.
+========================================================= */
 
 * {
     box-sizing: border-box;
