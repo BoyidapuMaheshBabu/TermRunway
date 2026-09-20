@@ -97,6 +97,7 @@
         <section
             class="container app-layout"
             id="planner"
+            data-view-mode="planning"
         >
 
             <div class="planner-column">
@@ -523,14 +524,72 @@
                             </h2>
                         </div>
 
-                        <span
-                            id="runway-status-pill"
-                            class="status-pill neutral"
-                        >
-                            Waiting for plan
-                        </span>
+                        <div class="dashboard-header-actions">
+
+                            <button
+                                id="edit-plan-btn"
+                                class="secondary-btn"
+                                type="button"
+                            >
+                                Edit Plan
+                            </button>
+
+                            <span
+                                id="runway-status-pill"
+                                class="status-pill neutral"
+                            >
+                                Waiting for plan
+                            </span>
+
+                        </div>
 
                     </div>
+
+
+                    <section
+                        class="plan-summary"
+                        aria-labelledby="plan-summary-title"
+                    >
+
+                        <div class="plan-summary-heading">
+
+                            <div>
+                                <p class="section-kicker">
+                                    PLAN SUMMARY
+                                </p>
+
+                                <h3 id="plan-summary-title">
+                                    Current planning setup
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        <div class="plan-summary-grid">
+
+                            <div>
+                                <span>
+                                    Planning method
+                                </span>
+
+                                <strong id="plan-summary-method">
+                                    Semester
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Planning period
+                                </span>
+
+                                <strong id="plan-summary-period">
+                                    —
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </section>
 
 
                     <div class="metric-grid">
