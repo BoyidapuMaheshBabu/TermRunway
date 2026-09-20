@@ -74,7 +74,7 @@ The project is **not presented as line-by-line manual coding without AI assistan
 TermRunway/
 ├── index.html
 ├── css/
-│   └── style.css
+│   └── styles.css
 ├── js/
 │   └── script.js
 └── README.md
@@ -99,7 +99,7 @@ Examples of issues addressed include:
 Planned improvements may include:
 
 - more detailed budget analytics
-- charts and spending insights
+- deeper budget analytics
 - additional export options
 - accessibility improvements
 - more student-focused planning tools
