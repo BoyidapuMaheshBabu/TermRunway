@@ -13,7 +13,7 @@
         content="TermRunway is a student financial planning dashboard for planning, tracking spending, forecasting a runway, testing decisions, and tracking savings goals."
     >
 
-    <title>TermRunway — Student Financial Planner</title>
+    <title>TermRunway — Financial Workspace</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,113 +34,110 @@
 <body>
 
     <header class="site-header">
-        <div class="container header-inner">
+    <div class="container header-inner">
+        <a class="brand" href="home.html" aria-label="TermRunway home">
+            <span class="brand-mark">TR</span>
+            <span class="brand-word">
+                <strong>TermRunway</strong>
+                <small>student financial workspace</small>
+            </span>
+        </a>
 
-            <a class="brand" href="home.html" aria-label="TermRunway home">
-                <span class="brand-mark">TR</span>
-                <span>TermRunway</span>
-            </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+            <a href="home.html">Overview</a>
+            <a class="active" href="#planner">Plan</a>
+            <a href="#runway-summary">Dashboard</a>
+            <a href="#tracking">Track</a>
+            <a href="#decisions">Decide</a>
+        </nav>
 
-            <nav class="nav-links" aria-label="Primary navigation">
-                <a href="home.html">Home</a>
-                <a class="active" href="#planner">Plan</a>
-                <a href="#runway-summary">Dashboard</a>
-                <a href="#tracking">Track</a>
-                <a href="#decisions">Decide</a>
-            </nav>
-
-            <a class="nav-cta" href="#planner">
-                Open planner
-            </a>
-
+        <div class="header-actions">
+            <span class="local-status">Local data</span>
+            <a class="nav-cta" href="#planner">Runway workspace ↗</a>
         </div>
-    </header>
+    </div>
+</header>
 
 
     <main id="top">
 
         <!-- PRODUCT WORKSPACE HERO -->
         <section class="hero">
-            <div class="container hero-grid">
-
-                <div class="hero-copy-wrap">
-
-                    <div class="hero-badge">
-                        <span class="badge-dot"></span>
-                        Student financial workspace
-                    </div>
-
-                    <h1>
-                        Build your plan.
-                        <span>See your runway.</span>
-                    </h1>
-
-                    <p class="hero-copy">
-                        Start with the money you have, add what is coming in,
-                        map the costs you expect, and let TermRunway turn those
-                        inputs into a financial picture you can act on.
-                    </p>
-
-                    <div class="hero-proof">
-                        <span>Plan</span>
-                        <i aria-hidden="true"></i>
-                        <span>Forecast</span>
-                        <i aria-hidden="true"></i>
-                        <span>Track</span>
-                        <i aria-hidden="true"></i>
-                        <span>Decide</span>
-                    </div>
-
-                </div>
-
-                <div class="hero-note">
-
-                    <div class="hero-note-top">
-                        <div>
-                            <span class="hero-note-label">RUNWAY SNAPSHOT</span>
-                            <strong>Financial workspace</strong>
-                        </div>
-
-                        <span class="hero-note-pill">Live after update</span>
-                    </div>
-
-                    <div class="hero-note-balance">
-                        <span>Example projected balance</span>
-                        <strong>₹6,500</strong>
-                        <small>Positive end-of-term buffer</small>
-                    </div>
-
-                    <div class="hero-note-grid">
-                        <div>
-                            <span>Available now</span>
-                            <strong>₹10,000</strong>
-                        </div>
-                        <div>
-                            <span>Future income</span>
-                            <strong>₹4,000</strong>
-                        </div>
-                        <div>
-                            <span>Days remaining</span>
-                            <strong>42</strong>
-                        </div>
-                        <div>
-                            <span>Safe spending</span>
-                            <strong>₹154/day</strong>
-                        </div>
-                    </div>
-
-                    <div class="hero-note-foot">
-                        <span class="status-dot"></span>
-                        <span>Your actual numbers appear here after you update the plan.</span>
-                    </div>
-
-                </div>
-
+    <div class="container hero-grid">
+        <div class="hero-copy-wrap">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Student financial workspace
             </div>
-        </section>
 
+            <h1>
+                Plan the term.
+                <span>Read the runway.</span>
+            </h1>
 
-        <!-- PLANNER + RUNWAY SUMMARY -->
+            <p class="hero-copy">
+                Start with what you have today, add the money you expect,
+                map the costs you already know, and use the runway to understand
+                what your choices mean across the planning period.
+            </p>
+
+            <div class="hero-command" aria-hidden="true">
+                <span>TR</span>
+                <code>workspace → plan → forecast → track → decide</code>
+            </div>
+
+            <div class="hero-proof">
+                <span>5 inputs</span>
+                <i aria-hidden="true"></i>
+                <span>1 runway</span>
+                <i aria-hidden="true"></i>
+                <span>live decision context</span>
+            </div>
+        </div>
+
+        <aside class="hero-note" aria-label="Illustrative runway snapshot">
+            <div class="hero-note-top">
+                <div>
+                    <span class="hero-note-label">RUNWAY SNAPSHOT</span>
+                    <strong>Your financial picture</strong>
+                </div>
+                <span class="hero-note-pill">Example</span>
+            </div>
+
+            <div class="hero-note-balance">
+                <span>Projected balance</span>
+                <strong>₹6,500</strong>
+                <small>Positive end-of-term buffer</small>
+            </div>
+
+            <div class="hero-note-grid">
+                <div>
+                    <span>Available now</span>
+                    <strong>₹10,000</strong>
+                </div>
+                <div>
+                    <span>Future income</span>
+                    <strong>₹4,000</strong>
+                </div>
+                <div>
+                    <span>Days remaining</span>
+                    <strong>42</strong>
+                </div>
+                <div>
+                    <span>Safe spending</span>
+                    <strong>₹154/day</strong>
+                </div>
+            </div>
+
+            <div class="hero-note-foot">
+                <span class="status-dot"></span>
+                <span>Your actual numbers appear here after you update the plan.</span>
+            </div>
+        </aside>
+    </div>
+</section>
+
+<!-- PLANNER + RUNWAY SUMMARY -->
         <section
             class="container app-layout"
             id="planner"

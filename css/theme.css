@@ -1,56 +1,70 @@
 :root {
-    /* TermRunway home-page design language */
-    --home-bg: #f6f8fc;
-    --home-surface: #ffffff;
-    --home-surface-soft: #f1f5fb;
-    --home-text: #0f172a;
-    --home-muted: #64748b;
-    --home-border: #e2e8f0;
-    --home-primary: #2563eb;
-    --home-primary-dark: #1d4ed8;
-    --home-success: #059669;
-    --home-warning: #d97706;
-    --home-danger: #dc2626;
+    --bg: #f6f8fa;
+    --surface: #ffffff;
+    --surface-subtle: #f6f8fa;
+    --surface-muted: #eef1f4;
+    --surface-blue: #f0f6ff;
 
-    --home-shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
-    --home-shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.06);
+    --text: #1f2328;
+    --muted: #656d76;
+    --muted-strong: #424a53;
 
-    --home-radius-sm: 10px;
-    --home-radius-md: 12px;
-    --home-radius-lg: 17px;
-    --home-radius-xl: 20px;
-    --home-radius-2xl: 24px;
-    --home-radius-pill: 999px;
+    --border: #d0d7de;
+    --border-strong: #afb8c1;
 
-    --home-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --primary: #0969da;
+    --primary-strong: #0550ae;
+    --primary-soft: #ddf4ff;
 
-    /* Shared aliases used by planner/dashboard styles */
-    --bg: var(--home-bg);
-    --surface: var(--home-surface);
-    --surface-soft: var(--home-surface-soft);
+    --success: #1f883d;
+    --success-soft: #dafbe1;
 
-    --text: var(--home-text);
-    --muted: var(--home-muted);
-    --border: var(--home-border);
+    --warning: #9a6700;
+    --warning-soft: #fff8c5;
 
-    --primary: var(--home-primary);
-    --accent: var(--home-primary);
-    --accent-soft: #eff6ff;
+    --danger: #cf222e;
+    --danger-soft: #ffebe9;
 
-    --success: var(--home-success);
-    --success-soft: #ecfdf3;
+    --ink: #0d1117;
+    --white: #ffffff;
 
-    --warning: var(--home-warning);
-    --warning-soft: #fff7ed;
+    --shadow-sm: 0 1px 2px rgba(27, 31, 36, 0.08);
+    --shadow-md: 0 8px 24px rgba(27, 31, 36, 0.08);
+    --shadow-lg: 0 18px 45px rgba(27, 31, 36, 0.12);
 
-    --danger: var(--home-danger);
-    --danger-soft: #fef2f2;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-pill: 999px;
 
-    --radius: var(--home-radius-lg);
-    --shadow: var(--home-shadow-soft);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
-    --input-border: #dbe3ee;
-    --grid-line: #dbe5f2;
+    --input-border: #d0d7de;
+    --grid-line: #eaeef2;
+
+    --home-bg: var(--bg);
+    --home-surface: var(--surface);
+    --home-surface-soft: var(--surface-subtle);
+    --home-text: var(--text);
+    --home-muted: var(--muted);
+    --home-border: var(--border);
+    --home-primary: var(--primary);
+    --home-primary-dark: var(--primary-strong);
+    --home-success: var(--success);
+    --home-warning: var(--warning);
+    --home-danger: var(--danger);
+    --home-shadow: var(--shadow-lg);
+    --home-shadow-soft: var(--shadow-md);
+
+    --home-radius-sm: var(--radius-sm);
+    --home-radius-md: var(--radius-md);
+    --home-radius-lg: var(--radius-lg);
+    --home-radius-xl: var(--radius-xl);
+    --home-radius-2xl: 20px;
+    --home-radius-pill: var(--radius-pill);
+
+    --home-ease: var(--ease);
 }
 
 * {
@@ -67,6 +81,7 @@ input,
 select {
     font-family:
         Inter,
+        ui-sans-serif,
         system-ui,
         -apple-system,
         BlinkMacSystemFont,
@@ -85,15 +100,15 @@ button {
 }
 
 ::selection {
-    background: rgba(37, 99, 235, 0.16);
-    color: var(--home-text);
+    background: rgba(9, 105, 218, 0.17);
+    color: var(--text);
 }
 
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible {
-    outline: 3px solid rgba(37, 99, 235, 0.20);
+    outline: 3px solid rgba(9, 105, 218, 0.22);
     outline-offset: 2px;
 }
 
