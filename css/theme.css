@@ -1,0 +1,178 @@
+/* =========================================================
+   TERM RUNWAY — SHARED THEME
+   V1
+
+   Ownership
+   ----------
+   theme.css  = visual identity + design tokens
+   home.css   = homepage layout/components
+   styles.css = planner/dashboard layout/components
+
+   Financial/application logic is kept in JavaScript.
+========================================================= */
+
+:root {
+    /* Typography */
+    --tr-font-sans:
+        "Inter",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    /* Brand */
+    --tr-primary: #2563eb;
+    --tr-primary-dark: #1d4ed8;
+    --tr-primary-soft: #eff6ff;
+
+    /* Surfaces */
+    --tr-bg: #f6f8fc;
+    --tr-surface: #ffffff;
+    --tr-surface-soft: #f8fafc;
+
+    /* Text */
+    --tr-text: #172033;
+    --tr-text-strong: #101828;
+    --tr-text-soft: #475467;
+    --tr-muted: #667085;
+
+    /* Borders */
+    --tr-border: #e4e7ec;
+    --tr-border-strong: #cbd5e1;
+    --tr-input-border: #d8e0eb;
+
+    /* Semantic */
+    --tr-success: #14804a;
+    --tr-success-soft: #ecfdf3;
+    --tr-success-border: #b7ebcb;
+
+    --tr-warning: #a15c00;
+    --tr-warning-soft: #fff7e6;
+    --tr-warning-border: #efd59f;
+
+    --tr-danger: #b42318;
+    --tr-danger-soft: #fef3f2;
+    --tr-danger-border: #f2c5c1;
+
+    --tr-neutral-soft: #f2f4f7;
+
+    /* Data visualization */
+    --tr-track: #eef2f6;
+    --tr-grid: #dbe3f0;
+
+    /* Shape */
+    --tr-radius-sm: 10px;
+    --tr-radius-md: 12px;
+    --tr-radius-lg: 14px;
+    --tr-radius-xl: 18px;
+    --tr-radius-2xl: 20px;
+    --tr-radius-3xl: 24px;
+    --tr-radius-pill: 999px;
+
+    /* Shadows */
+    --tr-shadow-soft: 0 10px 24px rgba(16, 24, 40, 0.05);
+    --tr-shadow-card: 0 16px 40px rgba(16, 24, 40, 0.07);
+    --tr-shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
+
+    /* Motion */
+    --tr-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --tr-duration-fast: 0.18s;
+    --tr-duration-normal: 0.25s;
+
+    /* -----------------------------------------
+       Compatibility aliases
+       Existing component selectors use these.
+    ----------------------------------------- */
+
+    --bg: var(--tr-bg);
+    --surface: var(--tr-surface);
+    --surface-soft: var(--tr-surface-soft);
+
+    --text: var(--tr-text);
+    --muted: var(--tr-muted);
+    --border: var(--tr-border);
+
+    --primary: #111827;
+    --accent: var(--tr-primary);
+    --accent-soft: var(--tr-primary-soft);
+
+    --success: var(--tr-success);
+    --success-soft: var(--tr-success-soft);
+
+    --warning: var(--tr-warning);
+    --warning-soft: var(--tr-warning-soft);
+
+    --danger: var(--tr-danger);
+    --danger-soft: var(--tr-danger-soft);
+
+    --radius: var(--tr-radius-xl);
+    --shadow: var(--tr-shadow-card);
+
+    /* Homepage aliases */
+    --home-bg: var(--tr-bg);
+    --home-surface: var(--tr-surface);
+    --home-surface-soft: #f3f6fb;
+
+    --home-text: var(--tr-text-strong);
+    --home-muted: var(--tr-muted);
+    --home-border: var(--tr-border);
+
+    --home-primary: var(--tr-primary);
+    --home-primary-dark: var(--tr-primary-dark);
+    --home-success: #059669;
+    --home-danger: #dc2626;
+
+    --home-shadow: var(--tr-shadow);
+    --home-shadow-soft: var(--tr-shadow-soft);
+}
+
+
+/* =========================================================
+   GLOBAL VISUAL PRIMITIVES
+========================================================= */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--tr-font-sans);
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+::selection {
+    background: rgba(37, 99, 235, 0.16);
+    color: var(--tr-text);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.20);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
