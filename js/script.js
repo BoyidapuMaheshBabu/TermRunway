@@ -150,13 +150,19 @@
             getTotalExpectedIncome(normalized.incomeSources);
 
         normalized.transactions = Array.isArray(parsed.transactions)
-            ? parsed.transactions.map(transaction => ({
-                ...transaction,
-                category:
-                    transaction.category === 'other'
-                        ? 'misc'
-                        : transaction.category
-            }))
+            ? parsed.transactions
+                .filter(
+                    transaction =>
+                        transaction &&
+                        typeof transaction === 'object'
+                )
+                .map(transaction => ({
+                    ...transaction,
+                    category:
+                        transaction.category === 'other'
+                            ? 'misc'
+                            : transaction.category
+                }))
             : [];
 
         normalized.savingsGoal = {
@@ -187,27 +193,66 @@
             ];
 
             for (const storageKey of storageKeys) {
-                const raw = localStorage.getItem(storageKey);
+                let raw = null;
+
+                try {
+                    raw = localStorage.getItem(
+                        storageKey
+                    );
+                } catch (storageError) {
+                    console.warn(
+                        'TermRunway could not read localStorage key:',
+                        storageKey,
+                        storageError
+                    );
+                    continue;
+                }
 
                 if (!raw) {
                     continue;
                 }
 
-                const loadedState =
-                    normalizeState(
-                        JSON.parse(raw)
+                try {
+                    const loadedState =
+                        normalizeState(
+                            JSON.parse(raw)
+                        );
+
+                    if (storageKey !== STORAGE_KEY) {
+                        try {
+                            localStorage.setItem(
+                                STORAGE_KEY,
+                                JSON.stringify(
+                                    loadedState
+                                )
+                            );
+                        } catch (migrationError) {
+                            console.warn(
+                                'TermRunway could not migrate cached state:',
+                                migrationError
+                            );
+                        }
+                    }
+
+                    return loadedState;
+                } catch (parseError) {
+                    console.warn(
+                        'TermRunway ignored invalid cached state:',
+                        storageKey,
+                        parseError
                     );
 
-                if (storageKey !== STORAGE_KEY) {
-                    localStorage.setItem(
-                        STORAGE_KEY,
-                        JSON.stringify(
-                            loadedState
-                        )
-                    );
+                    try {
+                        localStorage.removeItem(
+                            storageKey
+                        );
+                    } catch (removeError) {
+                        console.warn(
+                            'TermRunway could not clear invalid cache:',
+                            removeError
+                        );
+                    }
                 }
-
-                return loadedState;
             }
         } catch (error) {
             console.warn(
@@ -308,7 +353,13 @@
         'goal-progress-bar',
         'goal-remaining',
         'goal-monthly',
-        'download-btn'
+        'download-btn',
+        'equation-available',
+        'equation-income',
+        'equation-remaining',
+        'equation-balance',
+        'projection-state-message',
+        'date-validation'
     ];
 
 
@@ -645,6 +696,10 @@
         const availableNow =
             Number(state.availableNow) || 0;
 
+        // Available Now is strictly the cash in hand today.
+        // Historical actual spending is already reflected in
+        // totalRemainingPlanned for semester planning and is never
+        // subtracted from availableNow a second time.
         const projectedBalance =
             availableNow +
             expectedFutureIncome -
@@ -795,6 +850,76 @@
     }
 
 
+    // 06.2a setDateValidationMessage()
+    // Use: Keeps date validation feedback inline and accessible.
+    function setDateValidationMessage(message) {
+        const validation =
+            getElement(
+                'date-validation'
+            );
+
+        validation.textContent =
+            message;
+
+        validation.classList.toggle(
+            'is-visible',
+            Boolean(message)
+        );
+    }
+
+
+    // 06.2b syncPlanningDateGuardrail()
+    // Use: Keeps To Date constrained to From Date and prevents invalid planning windows.
+    function syncPlanningDateGuardrail() {
+        const inputFromDate =
+            getElement(
+                'planning-from-date'
+            );
+
+        const inputToDate =
+            getElement(
+                'planning-to-date'
+            );
+
+        inputToDate.min =
+            inputFromDate.value || '';
+
+        if (
+            !inputFromDate.value ||
+            !inputToDate.value
+        ) {
+            setDateValidationMessage(
+                'Select both dates to define the planning period.'
+            );
+            return false;
+        }
+
+        const fromDate =
+            parseDate(
+                inputFromDate.value
+            );
+
+        const toDate =
+            parseDate(
+                inputToDate.value
+            );
+
+        if (
+            !fromDate ||
+            !toDate ||
+            toDate <= fromDate
+        ) {
+            setDateValidationMessage(
+                'To Date must be after From Date.'
+            );
+            return false;
+        }
+
+        setDateValidationMessage('');
+        return true;
+    }
+
+
     // 06.2 initPlannerInputs()
     // Use: Loads saved state into the planner form without revealing output sections.
     function initPlannerInputs() {
@@ -833,6 +958,7 @@
             formatDateIso(new Date());
 
         updatePlanningCopy();
+        syncPlanningDateGuardrail();
     }
 
 
@@ -896,6 +1022,10 @@
         validation.textContent = '';
 
         readPlannerInputs();
+
+        if (!syncPlanningDateGuardrail()) {
+            return;
+        }
 
         const model = calculateModel();
 
@@ -962,6 +1092,10 @@
     // 07.2 renderRunwaySummary()
     // Use: Updates the results-focused runway dashboard after a plan is submitted.
     function renderRunwaySummary(model) {
+        if (!model || !model.isValid) {
+            return;
+        }
+
         getElement(
             'display-available'
         ).textContent =
@@ -1003,6 +1137,68 @@
             formatCurrency(
                 model.dailySafeSpend
             );
+
+        getElement(
+            'equation-available'
+        ).textContent =
+            '₹' +
+            formatCurrency(
+                model.availableNow
+            );
+
+        getElement(
+            'equation-income'
+        ).textContent =
+            '₹' +
+            formatCurrency(
+                model.expectedFutureIncome
+            );
+
+        getElement(
+            'equation-remaining'
+        ).textContent =
+            '₹' +
+            formatCurrency(
+                model.totalRemainingPlanned
+            );
+
+        getElement(
+            'equation-balance'
+        ).textContent =
+            '₹' +
+            formatCurrency(
+                model.projectedBalance
+            );
+
+        const projectionCard =
+            document.querySelector(
+                '.projection-card'
+            );
+
+        if (projectionCard) {
+            projectionCard.classList.toggle(
+                'danger',
+                model.projectedBalance < 0
+            );
+
+            projectionCard.classList.toggle(
+                'success',
+                model.projectedBalance >= 0
+            );
+        }
+
+        getElement(
+            'projection-state-message'
+        ).textContent =
+            model.projectedBalance < 0
+                ? 'Shortfall: ₹' +
+                    formatCurrency(
+                        Math.abs(
+                            model.projectedBalance
+                        )
+                    ) +
+                    ' below the projected reserve needed for the current plan.'
+                : 'Buffer remaining after planned costs.';
 
         getElement(
             'display-balance-secondary'
@@ -1355,6 +1551,11 @@
                             category.id
                         ] || 0;
 
+                    const remaining =
+                        model.remainingPlannedByCategory[
+                            category.id
+                        ] || 0;
+
                     const percentage =
                         planned > 0
                             ? Math.min(
@@ -1383,33 +1584,35 @@
                     }
 
                     return [
-                        '<div class="analysis-row">',
-                        '<div class="analysis-top">',
-                        '<span class="analysis-label">',
+                        '<div class="analysis-row" role="row">',
+                        '<div class="analysis-category">',
+                        '<strong>',
                         escapeHtml(
                             category.label
                         ),
-                        '</span>',
-                        '<span class="analysis-value">',
-                        'Planned ₹',
-                        formatCurrency(
-                            planned
-                        ),
-                        ' · Actual ₹',
-                        formatCurrency(
-                            actual
-                        ),
-                        ' · ',
+                        '</strong>',
+                        '<span class="analysis-status">',
                         status,
                         '</span>',
                         '</div>',
-                        '<div class="progress-track">',
-                        '<div class="progress-bar"',
-                        ' style="width:',
-                        percentage,
-                        '%">',
-                        '</div>',
-                        '</div>',
+                        '<span class="analysis-amount financial-value">',
+                        '₹',
+                        formatCurrency(
+                            planned
+                        ),
+                        '</span>',
+                        '<span class="analysis-amount financial-value">',
+                        '₹',
+                        formatCurrency(
+                            actual
+                        ),
+                        '</span>',
+                        '<span class="analysis-amount financial-value">',
+                        '₹',
+                        formatCurrency(
+                            remaining
+                        ),
+                        '</span>',
                         '</div>'
                     ].join('');
                 }
@@ -1749,9 +1952,44 @@
                                 borderColor:
                                     '#3b82f6',
                                 backgroundColor:
-                                    'rgba(59, 130, 246, 0.08)',
+                                    context => {
+                                        const chart =
+                                            context.chart;
+
+                                        const chartArea =
+                                            chart.chartArea;
+
+                                        if (!chartArea) {
+                                            return 'rgba(59, 130, 246, 0.08)';
+                                        }
+
+                                        const gradient =
+                                            chart.ctx.createLinearGradient(
+                                                0,
+                                                chartArea.top,
+                                                0,
+                                                chartArea.bottom
+                                            );
+
+                                        gradient.addColorStop(
+                                            0,
+                                            'rgba(59, 130, 246, 0.18)'
+                                        );
+
+                                        gradient.addColorStop(
+                                            0.55,
+                                            'rgba(59, 130, 246, 0.07)'
+                                        );
+
+                                        gradient.addColorStop(
+                                            1,
+                                            'rgba(59, 130, 246, 0)'
+                                        );
+
+                                        return gradient;
+                                    },
                                 fill: true,
-                                tension: 0.3,
+                                tension: 0.35,
                                 borderWidth: 2.5,
                                 pointBackgroundColor:
                                     '#3b82f6',
@@ -1772,8 +2010,14 @@
                                     label:
                                         context =>
                                             ' Projected: ₹' +
-                                            formatCurrency(
+                                            Number(
                                                 context.parsed.y
+                                            ).toLocaleString(
+                                                'en-IN',
+                                                {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }
                                             )
                                 }
                             }
@@ -2277,6 +2521,7 @@
                     event.target.value;
 
                 saveState();
+                syncPlanningDateGuardrail();
             }
         );
 
@@ -2289,6 +2534,7 @@
                     event.target.value;
 
                 saveState();
+                syncPlanningDateGuardrail();
             }
         );
     }

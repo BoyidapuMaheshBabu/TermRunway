@@ -515,6 +515,12 @@
 
                     </div>
 
+                    <p
+                        id="date-validation"
+                        class="date-validation"
+                        aria-live="polite"
+                    ></p>
+
                 </section>
 
 
@@ -675,12 +681,20 @@
 
                     <div class="projection-card">
 
-                        <div>
-                            <span>Projected balance</span>
+                        <div class="projection-balance-main">
+                            <span>Projected Balance</span>
 
-                            <strong>
+                            <strong class="financial-value">
                                 ₹<span id="display-balance">0.00</span>
                             </strong>
+
+                            <span
+                                id="projection-state-message"
+                                class="projection-state-message"
+                                aria-live="polite"
+                            >
+                                Buffer remaining after planned costs.
+                            </span>
                         </div>
 
                         <div class="projection-meta">
@@ -701,6 +715,28 @@
                                 </strong>
                             </div>
 
+                        </div>
+
+                        <div class="projection-equation" aria-label="Projected reserve calculation">
+                            <div class="equation-item">
+                                <span>Available Now</span>
+                                <strong id="equation-available" class="financial-value">₹0.00</strong>
+                            </div>
+                            <span class="equation-op" aria-hidden="true">+</span>
+                            <div class="equation-item">
+                                <span>Future Income</span>
+                                <strong id="equation-income" class="financial-value">₹0.00</strong>
+                            </div>
+                            <span class="equation-op" aria-hidden="true">−</span>
+                            <div class="equation-item">
+                                <span>Remaining Plan</span>
+                                <strong id="equation-remaining" class="financial-value">₹0.00</strong>
+                            </div>
+                            <span class="equation-op equation-equals" aria-hidden="true">=</span>
+                            <div class="equation-item equation-result">
+                                <span>Projected Reserve</span>
+                                <strong id="equation-balance" class="financial-value">₹0.00</strong>
+                            </div>
                         </div>
 
                     </div>
@@ -1046,10 +1082,20 @@
                                     </h3>
                                 </div>
 
-                                <span id="analysis-total">
+                                <span
+                                    id="analysis-total"
+                                    class="financial-value"
+                                >
                                     ₹0.00
                                 </span>
 
+                            </div>
+
+                            <div class="analysis-columns" role="row" aria-label="Planned versus actual spending columns">
+                                <span>Category</span>
+                                <span>Planned (Full Period)</span>
+                                <span>Actual Spent (Recorded)</span>
+                                <span>Remaining Plan</span>
                             </div>
 
                             <div
