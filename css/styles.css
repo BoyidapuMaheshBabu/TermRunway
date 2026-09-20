@@ -3290,3 +3290,524 @@ select:focus {
         transition: none;
     }
 }
+
+
+/* =========================================================
+   TERM RUNWAY — PRODUCT UI POLISH
+   Home remains the visual source of truth.
+   This layer makes the working app feel like the same product.
+========================================================= */
+
+/* ---------- WORKSPACE HERO ---------- */
+
+.hero-copy-wrap h1 span {
+    display: block;
+    color: var(--home-primary);
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 11px;
+    border: 1px solid #dbe7fb;
+    border-radius: 999px;
+    background: #f8fbff;
+    color: var(--home-primary);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--home-primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+.hero-note-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--home-border);
+}
+
+.hero-note-top .hero-note-label {
+    display: block;
+}
+
+.hero-note-top strong {
+    margin-top: 4px;
+    font-size: 0.96rem;
+    letter-spacing: -0.02em;
+}
+
+.hero-note-pill {
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: var(--home-primary);
+    font-size: 0.61rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.hero-note-balance {
+    margin-top: 16px;
+    padding: 17px;
+    border: 1px solid #dbe5f2;
+    border-radius: 15px;
+    background: linear-gradient(180deg, #fbfdff 0%, #f7faff 100%);
+}
+
+.hero-note-balance > span {
+    display: block;
+    color: var(--home-muted);
+    font-size: 0.64rem;
+}
+
+.hero-note-balance strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 2.35rem;
+    line-height: 1;
+    letter-spacing: -0.055em;
+}
+
+.hero-note-balance small {
+    display: block;
+    margin-top: 8px;
+    color: var(--home-success);
+    font-size: 0.64rem;
+    font-weight: 800;
+}
+
+.hero-note-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    margin-top: 11px;
+}
+
+.hero-note-grid > div {
+    padding: 11px 12px;
+    border: 1px solid var(--home-border);
+    border-radius: 12px;
+    background: var(--home-surface-soft);
+}
+
+.hero-note-grid span {
+    display: block;
+    color: var(--home-muted);
+    font-size: 0.60rem;
+}
+
+.hero-note-grid strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--home-text);
+    font-size: 0.80rem;
+}
+
+.hero-note-foot {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 12px;
+    color: var(--home-muted);
+    font-size: 0.62rem;
+    line-height: 1.5;
+}
+
+.hero-note-foot .status-dot {
+    flex: 0 0 auto;
+    margin-top: 3px;
+    background: var(--home-success);
+}
+
+/* ---------- PLANNER COMPOSITION ---------- */
+
+.app-layout {
+    position: relative;
+}
+
+.app-layout::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    right: -180px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.035);
+    filter: blur(2px);
+    pointer-events: none;
+}
+
+.planner-column {
+    position: relative;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+.planner-column > .card:nth-child(1),
+.planner-column > .card:nth-child(4),
+.planner-column > .card:nth-child(5),
+.planner-column > .action-row,
+.planner-column > .validation {
+    grid-column: 1 / -1;
+}
+
+.planner-column > .card {
+    position: relative;
+    overflow: hidden;
+}
+
+.planner-column > .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+    opacity: 0.72;
+}
+
+.planner-column > .card:nth-child(2)::before {
+    background: linear-gradient(90deg, #2563eb 0%, #93c5fd 100%);
+}
+
+.planner-column > .card:nth-child(3)::before {
+    background: linear-gradient(90deg, #059669 0%, #34d399 100%);
+}
+
+.planner-column > .card:nth-child(4)::before {
+    background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+}
+
+.planner-column > .card:nth-child(5)::before {
+    background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 100%);
+}
+
+/* Step 1 acts like a section controller rather than a plain card. */
+.planner-column > .card:first-child {
+    padding: 25px 26px;
+    background:
+        radial-gradient(circle at 94% 50%, rgba(37, 99, 235, 0.08), transparent 30%),
+        #ffffff;
+    border-color: #d9e6f8;
+}
+
+.planner-column > .card:first-child .card-title-row > div:first-child {
+    max-width: 680px;
+}
+
+/* Income gets a subtle green-tinted working surface. */
+.planner-column > .card:nth-child(3) {
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfffd 100%);
+}
+
+/* Expenses stay neutral but gain a structured visual rhythm. */
+.planner-column > .card:nth-child(4) {
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+}
+
+.planner-column > .card:nth-child(5) {
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fcfaff 100%);
+}
+
+.planner-column > .action-row {
+    margin-top: 2px;
+    padding: 2px;
+}
+
+.planner-column > .action-row .primary-btn {
+    min-height: 50px;
+    font-size: 0.82rem;
+}
+
+.planner-column > .validation {
+    min-height: 20px;
+    margin: -4px 4px 0;
+}
+
+/* Add visual grouping between fields without adding clutter. */
+.field-grid .input-group {
+    padding: 12px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.field-grid .input-group:hover {
+    background: #f8fbff;
+    border-color: #e5edf8;
+}
+
+.field-grid .input-group:focus-within {
+    background: #fbfdff;
+    border-color: #dbe7fb;
+}
+
+/* ---------- DASHBOARD AS PRODUCT OUTPUT ---------- */
+
+.dashboard-column {
+    position: relative;
+}
+
+.dashboard-column .dashboard-card {
+    border-color: #d7e3f2;
+    box-shadow: var(--home-shadow);
+}
+
+.dashboard-header {
+    align-items: center;
+    background:
+        radial-gradient(circle at 95% 0%, rgba(37, 99, 235, 0.08), transparent 25%),
+        #ffffff;
+    border-radius: 16px 16px 0 0;
+}
+
+.dashboard-header-actions .secondary-btn {
+    background: #ffffff;
+}
+
+.dashboard-details {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 0 82px;
+    background:
+        radial-gradient(circle at 80% 4%, rgba(37, 99, 235, 0.07), transparent 23%),
+        #f7f9fc;
+}
+
+.dashboard-details-header {
+    padding: 24px 0 16px;
+}
+
+.dashboard-details-header h2 {
+    max-width: 800px;
+    margin-top: 2px;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    line-height: 1.06;
+    letter-spacing: -0.055em;
+}
+
+.dashboard-details-header > div > p:last-child {
+    font-size: 0.84rem;
+    line-height: 1.72;
+}
+
+.dashboard-chart-grid .chart-card,
+.tracking-card,
+.dashboard-details-two-column > .decision-card,
+.dashboard-details-two-column > .goal-card {
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.dashboard-chart-grid .chart-card:hover,
+.tracking-card:hover,
+.dashboard-details-two-column > .decision-card:hover,
+.dashboard-details-two-column > .goal-card:hover {
+    transform: translateY(-2px);
+    border-color: #d3e1f2;
+    box-shadow: var(--home-shadow);
+}
+
+.chart-heading {
+    align-items: center;
+}
+
+.chart-box {
+    min-height: 260px;
+    padding: 8px;
+    border: 1px solid #e7eef7;
+    background:
+        linear-gradient(180deg, #fbfdff 0%, #f8fbff 100%);
+}
+
+.doughnut-box {
+    min-height: 290px;
+}
+
+.tracking-card {
+    margin-top: 22px;
+    padding: 24px;
+    border-color: #d7e3f2;
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.tracking-header {
+    padding-bottom: 17px;
+}
+
+.tracking-header h2 {
+    font-size: 1.28rem;
+    letter-spacing: -0.035em;
+}
+
+.tracking-count {
+    border: 1px solid #dbe7fb;
+    background: #f4f8ff;
+}
+
+.tracker-panel,
+.tracking-grid .analysis-card {
+    border-color: #e0e8f2;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.tracker-panel {
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.analysis-card {
+    background:
+        linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.analysis-row {
+    padding: 9px 0;
+    border-top: 1px solid #eef2f7;
+}
+
+.analysis-row:first-child {
+    border-top: 0;
+}
+
+/* ---------- DECISION / GOAL AS DISTINCT PRODUCT MODULES ---------- */
+
+.dashboard-details-two-column {
+    gap: 18px;
+}
+
+.dashboard-details-two-column > .decision-card,
+.dashboard-details-two-column > .goal-card {
+    position: relative;
+    overflow: hidden;
+    padding: 23px;
+    border-color: #dfe8f3;
+}
+
+.dashboard-details-two-column > .decision-card::before,
+.dashboard-details-two-column > .goal-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.dashboard-details-two-column > .decision-card::before {
+    background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+}
+
+.dashboard-details-two-column > .goal-card::before {
+    background: linear-gradient(90deg, #059669 0%, #34d399 100%);
+}
+
+.dashboard-details-two-column > .decision-card {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.08), transparent 28%),
+        #ffffff;
+}
+
+.dashboard-details-two-column > .goal-card {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(5, 150, 105, 0.07), transparent 28%),
+        #ffffff;
+}
+
+.result-box,
+.goal-display {
+    border-radius: 14px;
+}
+
+/* ---------- MOBILE COMPOSITION ---------- */
+
+@media (max-width: 900px) {
+    .planner-column {
+        grid-template-columns: 1fr;
+    }
+
+    .planner-column > .card,
+    .planner-column > .action-row,
+    .planner-column > .validation {
+        grid-column: auto;
+    }
+
+    .planner-column > .card:first-child {
+        padding: 22px;
+    }
+
+    .hero-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 680px) {
+    .hero-copy-wrap h1 {
+        font-size: clamp(2.5rem, 13vw, 4.2rem);
+    }
+
+    .hero-note-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .hero-note-balance strong {
+        font-size: 2.15rem;
+    }
+
+    .field-grid .input-group {
+        padding: 9px;
+    }
+
+    .dashboard-details-header {
+        padding-top: 10px;
+    }
+
+    .dashboard-details-header h2 {
+        font-size: 2.15rem;
+    }
+
+    .dashboard-chart-grid .chart-card,
+    .tracking-card,
+    .dashboard-details-two-column > .decision-card,
+    .dashboard-details-two-column > .goal-card {
+        transform: none;
+    }
+}
+
+@media (max-width: 460px) {
+    .hero-note-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-note-top {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .hero-note-pill {
+        align-self: flex-start;
+    }
+}
