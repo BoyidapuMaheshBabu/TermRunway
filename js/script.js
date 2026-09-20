@@ -258,6 +258,7 @@
         'planning-to-date',
         'update-runway-btn',
         'reset-runway-btn',
+        'dashboard-reset-btn',
         'planner-validation',
         'planner',
         'runway-summary',
@@ -2150,6 +2151,13 @@
             'click',
             resetApplication
         );
+
+        getElement(
+            'dashboard-reset-btn'
+        ).addEventListener(
+            'click',
+            resetApplication
+        );
     }
 
 
@@ -2291,7 +2299,10 @@
     function resetApplication() {
         const shouldReset =
             window.confirm(
-                'Reset all TermRunway planning data and transactions?'
+                'Reset this TermRunway plan?\\n\\n' +
+                'This will clear your saved plan, spending records, and savings goal from this browser. ' +
+                'TermRunway cannot recover or fetch these details after you reset them.\\n\\n' +
+                'Choose Cancel to keep your data, or OK to reset everything.'
             );
 
         if (!shouldReset) {
