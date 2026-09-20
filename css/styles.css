@@ -313,15 +313,7 @@ button {
 ================================================== */
 
 .app-layout {
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1.02fr)
-        minmax(380px, 0.98fr);
-
-    gap: 22px;
-
-    align-items: start;
+    display: block;
 
     padding:
         28px 0
@@ -333,13 +325,36 @@ button {
     display: grid;
 
     gap: 18px;
+
+    width:
+        min(
+            920px,
+            100%
+        );
+
+    margin:
+        0 auto;
+}
+
+
+.app-layout.results-mode {
+    padding-top:
+        28px;
+}
+
+
+.app-layout.results-mode
+.planner-column {
+    display:
+        none;
 }
 
 
 .dashboard-column {
-    position: sticky;
+    position: static;
 
-    top: 84px;
+    width:
+        100%;
 }
 
 
@@ -762,6 +777,154 @@ select:focus {
 
     color:
         var(--danger);
+}
+
+
+/* ==================================================
+   DASHBOARD HEADER ACTIONS
+================================================== */
+
+.dashboard-header-actions {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        flex-end;
+
+    gap:
+        10px;
+
+    flex-wrap:
+        wrap;
+}
+
+
+.dashboard-header-actions
+.secondary-btn {
+    min-height:
+        38px;
+
+    padding:
+        8px 13px;
+
+    font-size:
+        0.76rem;
+}
+
+
+/* ==================================================
+   PLAN SUMMARY
+================================================== */
+
+.plan-summary {
+    margin-top:
+        18px;
+
+    padding:
+        16px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--surface-soft);
+}
+
+
+.plan-summary-heading h3 {
+    margin:
+        0;
+
+    font-size:
+        0.94rem;
+}
+
+
+.plan-summary-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        14px;
+
+    margin-top:
+        13px;
+}
+
+
+.plan-summary-grid > div {
+    min-width:
+        0;
+}
+
+
+.plan-summary-grid span {
+    display:
+        block;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.68rem;
+}
+
+
+.plan-summary-grid strong {
+    display:
+        block;
+
+    margin-top:
+        3px;
+
+    font-size:
+        0.84rem;
+}
+
+
+/* ==================================================
+   RESULTS MODE SPACING
+================================================== */
+
+.app-layout.results-mode
+.dashboard-column {
+    animation:
+        resultsReveal
+        0.25s
+        ease;
+}
+
+
+@keyframes resultsReveal {
+
+    from {
+        opacity:
+            0;
+
+        transform:
+            translateY(8px);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+    }
 }
 
 
@@ -2058,18 +2221,6 @@ select:focus {
 
 @media (max-width: 1050px) {
 
-    .app-layout {
-        grid-template-columns:
-            1fr;
-    }
-
-
-    .dashboard-column {
-        position:
-            static;
-    }
-
-
     .dashboard-chart-grid {
         grid-template-columns:
             repeat(
@@ -2172,6 +2323,21 @@ select:focus {
     .dashboard-header {
         flex-direction:
             column;
+    }
+
+
+    .dashboard-header-actions {
+        width:
+            100%;
+
+        justify-content:
+            flex-start;
+    }
+
+
+    .plan-summary-grid {
+        grid-template-columns:
+            1fr;
     }
 
 
