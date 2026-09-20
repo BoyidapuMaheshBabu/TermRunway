@@ -1934,22 +1934,13 @@ select:focus {
    PLANNED VS ACTUAL TRACKING
 ================================================== */
 
+/* ==================================================
+   PLANNED VS ACTUAL TRACKING
+================================================== */
+
 .tracking-card {
     margin-top:
-        16px;
-
-    padding:
-        20px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        16px;
-
-    background:
-        #ffffff;
+        28px;
 }
 
 
@@ -1967,7 +1958,7 @@ select:focus {
         20px;
 
     margin-bottom:
-        18px;
+        16px;
 }
 
 
@@ -1976,10 +1967,10 @@ select:focus {
         0;
 
     font-size:
-        1.1rem;
+        1.2rem;
 
     letter-spacing:
-        -0.02em;
+        -0.025em;
 }
 
 
@@ -1994,16 +1985,32 @@ select:focus {
         var(--muted);
 
     font-size:
-        0.8rem;
+        0.82rem;
 }
 
 
 .tracking-count {
+    padding:
+        6px 10px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        999px;
+
+    background:
+        var(--surface-soft);
+
     color:
         var(--muted);
 
     font-size:
-        0.74rem;
+        0.72rem;
+
+    font-weight:
+        700;
 
     white-space:
         nowrap;
@@ -2015,8 +2022,10 @@ select:focus {
         grid;
 
     grid-template-columns:
-        minmax(300px, 0.82fr)
-        minmax(0, 1.18fr);
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
 
     gap:
         16px;
@@ -2026,12 +2035,17 @@ select:focus {
 }
 
 
-.tracker-panel {
+.tracker-panel,
+.tracking-grid
+.analysis-card {
     min-width:
         0;
 
+    margin-top:
+        0;
+
     padding:
-        18px;
+        20px;
 
     border:
         1px solid
@@ -2041,21 +2055,40 @@ select:focus {
         14px;
 
     background:
-        var(--surface-soft);
+        var(--surface);
+
+    box-shadow:
+        var(--shadow);
 }
 
 
 .tracker-panel
 .card-heading {
     margin-bottom:
-        16px;
+        18px;
 }
 
 
-.tracking-grid
-.analysis-card {
-    margin-top:
+.tracker-panel
+.card-heading h3 {
+    margin:
         0;
+
+    font-size:
+        0.98rem;
+}
+
+
+.tracker-panel
+.card-heading p:not(.section-kicker) {
+    margin:
+        7px 0 0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.79rem;
 }
 
 
@@ -2357,6 +2390,9 @@ select:focus {
 
 
     .tracking-count {
+        align-self:
+            flex-start;
+
         white-space:
             normal;
     }
