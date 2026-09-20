@@ -2,416 +2,396 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta
         name="description"
-        content="Learn how TermRunway helps students plan, track, and understand their semester finances."
+        content="TermRunway helps students plan, forecast, track, and understand their semester finances."
     >
+    <title>TermRunway — Make Your Semester Money Last</title>
 
-    <title>TermRunway — Plan Your Financial Runway</title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
-
-    <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/home.css">
 </head>
 
 <body>
-
     <header class="home-header">
         <div class="home-container home-header-inner">
-
-            <a class="home-brand" href="home.html">
-                TermRunway
+            <a class="home-brand" href="home.html" aria-label="TermRunway home">
+                <span class="brand-mark">TR</span>
+                <span>TermRunway</span>
             </a>
 
             <nav class="home-nav" aria-label="Primary navigation">
                 <a class="active" href="home.html">Home</a>
                 <a href="index.html#planner">Plan</a>
-                <a href="index.html#dashboard">Dashboard</a>
-                <a href="index.html#tracker">Track</a>
+                <a href="index.html#runway-summary">Dashboard</a>
+                <a href="index.html#tracking">Track</a>
                 <a href="index.html#decisions">Decide</a>
             </nav>
 
+            <a class="home-nav-cta" href="index.html#planner">Open planner</a>
         </div>
     </header>
 
-
     <main>
-
-        <!-- HERO -->
         <section class="home-hero">
             <div class="home-container home-hero-grid">
-
                 <div class="hero-copy-wrap">
-
-                    <p class="home-eyebrow">
-                        STUDENT FINANCIAL PLANNING
-                    </p>
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        Student financial planning
+                    </div>
 
                     <h1>
-                        See where your money is going.
-                        Understand how long it can last.
+                        Make your semester money
+                        <span>last on purpose.</span>
                     </h1>
 
                     <p class="home-lead">
                         TermRunway turns the money you have, the income you expect,
-                        and the expenses you plan into a forward-looking financial picture.
+                        and the expenses you plan into one forward-looking financial picture.
                     </p>
 
                     <div class="hero-actions">
                         <a class="home-btn primary" href="index.html#planner">
                             Start planning
+                            <span aria-hidden="true">→</span>
                         </a>
-
                         <a class="home-btn secondary" href="#how-it-works">
-                            How it works
+                            See how it works
                         </a>
                     </div>
 
-                    <p class="hero-note">
-                        Your existing TermRunway workflow — explained before you start entering numbers.
-                    </p>
-
+                    <div class="hero-proof">
+                        <span>Plan</span>
+                        <i aria-hidden="true"></i>
+                        <span>Forecast</span>
+                        <i aria-hidden="true"></i>
+                        <span>Track</span>
+                        <i aria-hidden="true"></i>
+                        <span>Decide</span>
+                    </div>
                 </div>
 
-
-                <!-- DASHBOARD PREVIEW -->
-                <div class="dashboard-preview" aria-label="Example TermRunway dashboard preview">
+                <div class="dashboard-preview" aria-label="Illustrative TermRunway dashboard preview">
+                    <div class="preview-glow"></div>
 
                     <div class="preview-topbar">
                         <div>
-                            <span class="preview-kicker">YOUR RUNWAY</span>
-                            <strong>Financial dashboard</strong>
+                            <span class="preview-kicker">TERM RUNWAY</span>
+                            <strong>Your financial picture</strong>
+                        </div>
+                        <span class="preview-pill">Example</span>
+                    </div>
+
+                    <div class="preview-main-card">
+                        <div class="preview-main-heading">
+                            <span>Projected balance</span>
+                            <strong>₹6,500</strong>
+                            <small>Positive end-of-term buffer</small>
                         </div>
 
-                        <span class="preview-pill">
-                            Example view
-                        </span>
+                        <div class="mini-chart" aria-hidden="true">
+                            <span style="height: 24%"></span>
+                            <span style="height: 34%"></span>
+                            <span style="height: 42%"></span>
+                            <span style="height: 51%"></span>
+                            <span style="height: 60%"></span>
+                            <span style="height: 72%"></span>
+                            <span style="height: 82%"></span>
+                            <span style="height: 92%"></span>
+                        </div>
+
+                        <div class="chart-caption">
+                            <span>Today</span>
+                            <strong>Projected runway</strong>
+                            <span>End date</span>
+                        </div>
                     </div>
 
                     <div class="preview-metrics">
-
                         <div class="preview-metric">
                             <span>Available now</span>
                             <strong>₹10,000</strong>
                         </div>
-
                         <div class="preview-metric">
                             <span>Future income</span>
                             <strong>₹4,000</strong>
                         </div>
-
                         <div class="preview-metric">
-                            <span>Remaining plan</span>
-                            <strong>₹7,500</strong>
+                            <span>Days remaining</span>
+                            <strong>42</strong>
                         </div>
-
                     </div>
 
-                    <div class="preview-balance">
-
+                    <div class="preview-bottom">
                         <div>
-                            <span>Projected balance</span>
-                            <strong>₹6,500</strong>
+                            <span>Safe spending</span>
+                            <strong>₹154/day</strong>
                         </div>
-
-                        <div class="preview-balance-meta">
-                            <div>
-                                <span>Days remaining</span>
-                                <strong>42</strong>
-                            </div>
-
-                            <div>
-                                <span>Safe spending</span>
-                                <strong>₹154/day</strong>
-                            </div>
+                        <div class="preview-status">
+                            <span class="status-dot"></span>
+                            Plan has a buffer
                         </div>
-
-                    </div>
-
-                    <div class="preview-flow">
-
-                        <div class="flow-line">
-                            <span>Money available</span>
-                            <strong>₹10,000</strong>
-                        </div>
-
-                        <div class="flow-line positive">
-                            <span>+ Expected income</span>
-                            <strong>₹4,000</strong>
-                        </div>
-
-                        <div class="flow-line negative">
-                            <span>− Remaining planned costs</span>
-                            <strong>₹7,500</strong>
-                        </div>
-
-                        <div class="flow-result">
-                            <span>Projected end balance</span>
-                            <strong>₹6,500</strong>
-                        </div>
-
                     </div>
 
                     <p class="preview-footnote">
                         Illustrative values only — your dashboard uses your own inputs.
                     </p>
-
                 </div>
-
             </div>
         </section>
 
+        <section class="home-section intro-strip">
+            <div class="home-container intro-strip-inner">
+                <div>
+                    <span class="strip-label">ONE PLACE FOR THE FULL PICTURE</span>
+                    <p>
+                        From the first plan to the next purchase, keep your semester finances connected.
+                    </p>
+                </div>
+                <a href="index.html#runway-summary">Explore the dashboard →</a>
+            </div>
+        </section>
 
-        <!-- HOW IT WORKS -->
         <section class="home-section" id="how-it-works">
             <div class="home-container">
-
-                <div class="section-intro">
-                    <p class="home-eyebrow">HOW IT WORKS</p>
-
-                    <h2>
-                        Give TermRunway a financial picture.
-                        It turns that picture into a runway.
-                    </h2>
-
+                <div class="section-heading">
+                    <div>
+                        <p class="home-eyebrow">HOW IT WORKS</p>
+                        <h2>Start with today. Think through the whole term.</h2>
+                    </div>
                     <p>
-                        Start with the numbers you already know. The current application
-                        then uses them to calculate your forward financial position.
+                        TermRunway is built around a simple idea: a budget is more useful
+                        when it shows what today's choices mean for tomorrow.
                     </p>
                 </div>
 
-
                 <div class="steps-grid">
-
                     <article class="step-card">
                         <span class="step-number">01</span>
-                        <h3>Choose a planning method</h3>
-                        <p>
-                            Use <strong>Semester</strong> for whole-period figures or
-                            <strong>Monthly</strong> for recurring monthly amounts.
-                        </p>
+                        <div>
+                            <h3>Set the timeline</h3>
+                            <p>
+                                Choose the planning period with start and end dates,
+                                using a semester or monthly approach.
+                            </p>
+                        </div>
                     </article>
 
                     <article class="step-card">
                         <span class="step-number">02</span>
-                        <h3>Enter money coming in</h3>
-                        <p>
-                            Add the money already available now and the income you
-                            expect during the planning period.
-                        </p>
+                        <div>
+                            <h3>Add money coming in</h3>
+                            <p>
+                                Enter what is already available and the income
+                                you expect during the period.
+                            </p>
+                        </div>
                     </article>
 
                     <article class="step-card">
                         <span class="step-number">03</span>
-                        <h3>Plan your expenses</h3>
-                        <p>
-                            Estimate costs such as rent, food, transport, utilities,
-                            entertainment, books, and other spending.
-                        </p>
+                        <div>
+                            <h3>Plan the costs</h3>
+                            <p>
+                                Account for recurring and planned expenses such as
+                                food, rent, transport, utilities, books, and more.
+                            </p>
+                        </div>
                     </article>
 
                     <article class="step-card">
                         <span class="step-number">04</span>
-                        <h3>Set the timeline</h3>
-                        <p>
-                            Choose your start and end dates so the forecast is tied
-                            to an actual period instead of just a total.
-                        </p>
+                        <div>
+                            <h3>Read the runway</h3>
+                            <p>
+                                See projected balance, remaining days, spending
+                                patterns, and the room your plan leaves for decisions.
+                            </p>
+                        </div>
                     </article>
-
                 </div>
-
             </div>
         </section>
 
-
-        <!-- DASHBOARD EXPLANATION -->
         <section class="home-section soft-section">
             <div class="home-container">
-
-                <div class="section-intro compact">
-                    <p class="home-eyebrow">YOUR DASHBOARD</p>
-
-                    <h2>
-                        The numbers answer the questions that matter.
-                    </h2>
-                </div>
-
-
-                <div class="dashboard-explain-grid">
-
-                    <article class="explain-card featured">
-                        <span class="explain-icon">₹</span>
-                        <div>
-                            <h3>Projected balance</h3>
-                            <p>
-                                Shows the money TermRunway projects to remain at
-                                the end of your planning period after expected
-                                future income and remaining planned costs.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="explain-card">
-                        <span class="explain-icon">↗</span>
-                        <div>
-                            <h3>Daily safe spending</h3>
-                            <p>
-                                Converts a positive projected balance into a
-                                daily figure for the remaining days.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="explain-card">
-                        <span class="explain-icon">%</span>
-                        <div>
-                            <h3>Plan health</h3>
-                            <p>
-                                Gives you a quick view of the buffer in the
-                                current financial plan.
-                            </p>
-                        </div>
-                    </article>
-
-                    <article class="explain-card">
-                        <span class="explain-icon">◌</span>
-                        <div>
-                            <h3>Charts & analysis</h3>
-                            <p>
-                                See forecast movement, cash flow, expense
-                                distribution, and planned-versus-actual spending.
-                            </p>
-                        </div>
-                    </article>
-
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- EXISTING TOOLS -->
-        <section class="home-section">
-            <div class="home-container">
-
-                <div class="section-intro">
-                    <p class="home-eyebrow">ALREADY IN THE APP</p>
-
-                    <h2>
-                        Keep the plan connected to real decisions.
-                    </h2>
-
+                <div class="section-heading">
+                    <div>
+                        <p class="home-eyebrow">WHAT YOU CAN SEE</p>
+                        <h2>Not just a total. A financial picture.</h2>
+                    </div>
                     <p>
-                        These are not new Home-page features. They are the existing
-                        TermRunway tools the Home page is here to explain.
+                        Each part of the dashboard answers a different question about
+                        where your money is going and how long the plan can hold.
                     </p>
                 </div>
 
-
-                <div class="tool-grid">
-
-                    <article class="tool-card">
-                        <span class="tool-label">TRACK</span>
-                        <h3>Record actual expenses</h3>
-                        <p>
-                            Add an expense with its date, category, description,
-                            and amount so the dashboard can compare planned and actual spending.
-                        </p>
-                        <a href="index.html#tracker">Open expense tracker →</a>
+                <div class="feature-grid">
+                    <article class="feature-card feature-card-large">
+                        <span class="feature-icon">₹</span>
+                        <div>
+                            <span class="feature-label">FORECAST</span>
+                            <h3>Projected balance</h3>
+                            <p>
+                                See what your plan projects to remain at the end of the
+                                period after expected income and remaining planned costs.
+                            </p>
+                        </div>
+                        <div class="feature-value">
+                            <span>Example</span>
+                            <strong>₹6,500</strong>
+                        </div>
                     </article>
 
-                    <article class="tool-card">
-                        <span class="tool-label">DECIDE</span>
-                        <h3>Check a purchase</h3>
-                        <p>
-                            Test a purchase against the projected balance and see
-                            how that decision changes the runway.
-                        </p>
-                        <a href="index.html#decisions">Open decision center →</a>
+                    <article class="feature-card">
+                        <span class="feature-icon">◷</span>
+                        <div>
+                            <span class="feature-label">TIME</span>
+                            <h3>Days remaining</h3>
+                            <p>
+                                Connect the money left to the time left in the plan.
+                            </p>
+                        </div>
                     </article>
 
-                    <article class="tool-card">
-                        <span class="tool-label">GOAL</span>
-                        <h3>Follow a savings goal</h3>
-                        <p>
-                            Set a target, record current savings, and monitor the
-                            remaining amount and required monthly pace.
-                        </p>
-                        <a href="index.html#dashboard">Open dashboard →</a>
+                    <article class="feature-card">
+                        <span class="feature-icon">↗</span>
+                        <div>
+                            <span class="feature-label">PACE</span>
+                            <h3>Daily safe spending</h3>
+                            <p>
+                                Turn a positive projected balance into a daily planning figure.
+                            </p>
+                        </div>
                     </article>
 
-                    <article class="tool-card">
-                        <span class="tool-label">SUMMARY</span>
-                        <h3>Print a plan summary</h3>
-                        <p>
-                            Use the existing print / PDF summary action when
-                            you want a static copy of the dashboard.
-                        </p>
-                        <a href="index.html#dashboard">View dashboard →</a>
+                    <article class="feature-card">
+                        <span class="feature-icon">◎</span>
+                        <div>
+                            <span class="feature-label">ANALYZE</span>
+                            <h3>Spending analysis</h3>
+                            <p>
+                                Understand expense distribution and planned-versus-actual spending.
+                            </p>
+                        </div>
                     </article>
 
+                    <article class="feature-card">
+                        <span class="feature-icon">✓</span>
+                        <div>
+                            <span class="feature-label">DECIDE</span>
+                            <h3>Purchase checks</h3>
+                            <p>
+                                Test a planned purchase against the financial picture before you spend.
+                            </p>
+                        </div>
+                    </article>
                 </div>
-
             </div>
         </section>
 
+        <section class="home-section decision-section">
+            <div class="home-container decision-grid">
+                <div>
+                    <p class="home-eyebrow">BUILT AROUND REAL STUDENT DECISIONS</p>
+                    <h2>What happens when the plan meets real life?</h2>
+                    <p>
+                        Plans change. Expenses appear. Income moves. TermRunway keeps the
+                        forecast connected to actual spending so you can see the effect instead
+                        of relying on a single budget number.
+                    </p>
 
-        <!-- FINAL CTA -->
+                    <div class="decision-points">
+                        <div>
+                            <span>01</span>
+                            <strong>Record actual expenses</strong>
+                            <p>Compare what you planned with what you really spent.</p>
+                        </div>
+                        <div>
+                            <span>02</span>
+                            <strong>Check a purchase</strong>
+                            <p>See how a new expense changes the projected runway.</p>
+                        </div>
+                        <div>
+                            <span>03</span>
+                            <strong>Track a savings goal</strong>
+                            <p>Keep a separate target visible without losing the bigger picture.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="decision-card">
+                    <span class="decision-card-kicker">THE CORE QUESTION</span>
+                    <strong>“Can my money support this?”</strong>
+                    <p>
+                        TermRunway gives you a financial context for the decision,
+                        not just an isolated expense amount.
+                    </p>
+                    <a href="index.html#decisions">Open decision center →</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="home-container">
+                <div class="method-card">
+                    <div>
+                        <p class="home-eyebrow">FLEXIBLE PLANNING</p>
+                        <h2>Semester numbers or monthly numbers. Start where your data is.</h2>
+                    </div>
+
+                    <div class="method-options">
+                        <div class="method-option active">
+                            <span>Semester</span>
+                            <p>Plan across your full academic period.</p>
+                        </div>
+                        <div class="method-option">
+                            <span>Monthly</span>
+                            <p>Work with recurring monthly income and expenses.</p>
+                        </div>
+                    </div>
+
+                    <a class="home-btn secondary" href="index.html#planner">
+                        Choose a method
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <section class="home-cta">
             <div class="home-container cta-inner">
-
                 <div>
-                    <p class="home-eyebrow">READY TO PLAN?</p>
-
-                    <h2>
-                        Start with the money you have today.
-                    </h2>
-
+                    <p class="home-eyebrow">READY TO START?</p>
+                    <h2>Build your runway before the money starts running out.</h2>
                     <p>
-                        Add your current numbers, update the runway,
-                        and let the dashboard show the bigger picture.
+                        Put your current numbers into the planner and turn them into a
+                        timeline you can actually follow.
                     </p>
                 </div>
 
                 <a class="home-btn primary large" href="index.html#planner">
-                    Open TermRunway planner
+                    Open TermRunway
+                    <span aria-hidden="true">→</span>
                 </a>
-
             </div>
         </section>
-
     </main>
 
-
     <footer class="home-footer">
-        <div class="home-container">
-            <p>
-                TermRunway • Built to help students understand their financial runway.
-            </p>
+        <div class="home-container footer-inner">
+            <div class="home-brand">
+                <span class="brand-mark">TR</span>
+                <span>TermRunway</span>
+            </div>
+            <p>Plan smarter. See further.</p>
         </div>
     </footer>
-
 </body>
 </html>
