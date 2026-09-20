@@ -2288,6 +2288,12 @@ select:focus {
             );
     }
 
+
+    .tracking-grid {
+        grid-template-columns:
+            1fr;
+    }
+
 }
 
 
@@ -2351,6 +2357,19 @@ select:focus {
     .tracker-form {
         grid-template-columns:
             1fr;
+    }
+
+
+    .tracker-panel,
+    .tracking-grid .analysis-card {
+        padding:
+            18px;
+    }
+
+
+    .tracker-form .primary-btn {
+        width:
+            100%;
     }
 
 
