@@ -1,41 +1,9 @@
-:root {
+/* =========================================================
+   TERM RUNWAY — PLANNER & DASHBOARD STYLES
 
-    --bg: #f5f7fb;
-
-    --surface: #ffffff;
-
-    --surface-soft: #f8fafc;
-
-    --text: #172033;
-
-    --muted: #667085;
-
-    --border: #e4e7ec;
-
-    --primary: #111827;
-
-    --accent: #2563eb;
-
-    --accent-soft: #eff6ff;
-
-    --success: #14804a;
-
-    --success-soft: #ecfdf3;
-
-    --warning: #a15c00;
-
-    --warning-soft: #fff7e6;
-
-    --danger: #b42318;
-
-    --danger-soft: #fef3f2;
-
-    --radius: 18px;
-
-    --shadow:
-        0 16px 40px rgba(16, 24, 40, 0.07);
-}
-
+   Shared visual tokens live in css/theme.css.
+   This file owns layout, components, states, and page-specific UI.
+========================================================= */
 
 /* ==================================================
    GLOBAL
