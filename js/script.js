@@ -28,8 +28,11 @@
     // 01. CONFIGURATION & CATEGORY DEFINITIONS
     // ==================================================
 
-    const STORAGE_KEY = 'termrunway_state_v3';
-    const LEGACY_STORAGE_KEY = 'termrunway_state_v2';
+    const STORAGE_KEY = 'termrunway_state_v4';
+    const LEGACY_STORAGE_KEYS = [
+        'termrunway_state_v3',
+        'termrunway_state_v2'
+    ];
 
     const CATEGORIES = [
         { id: 'tuition', label: 'Tuition & Fees' },
@@ -94,7 +97,8 @@
                 name: '',
                 target: 0,
                 saved: 0
-            }
+            },
+            hasSubmittedPlan: false
         };
     }
 
@@ -166,6 +170,9 @@
         normalized.savingsGoal.saved =
             Number(normalized.savingsGoal.saved) || 0;
 
+        normalized.hasSubmittedPlan =
+            parsed.hasSubmittedPlan === true;
+
         return normalized;
     }
 
@@ -174,21 +181,33 @@
     // Use: Loads the current state or safely migrates the previous v2 state.
     function loadState() {
         try {
-            const currentRaw = localStorage.getItem(STORAGE_KEY);
+            const storageKeys = [
+                STORAGE_KEY,
+                ...LEGACY_STORAGE_KEYS
+            ];
 
-            if (currentRaw) {
-                return normalizeState(JSON.parse(currentRaw));
-            }
+            for (const storageKey of storageKeys) {
+                const raw = localStorage.getItem(storageKey);
 
-            const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+                if (!raw) {
+                    continue;
+                }
 
-            if (legacyRaw) {
-                const migratedState = normalizeState(JSON.parse(legacyRaw));
-                localStorage.setItem(
-                    STORAGE_KEY,
-                    JSON.stringify(migratedState)
-                );
-                return migratedState;
+                const loadedState =
+                    normalizeState(
+                        JSON.parse(raw)
+                    );
+
+                if (storageKey !== STORAGE_KEY) {
+                    localStorage.setItem(
+                        STORAGE_KEY,
+                        JSON.stringify(
+                            loadedState
+                        )
+                    );
+                }
+
+                return loadedState;
             }
         } catch (error) {
             console.warn(
@@ -240,7 +259,11 @@
         'update-runway-btn',
         'reset-runway-btn',
         'planner-validation',
+        'planner',
         'runway-summary',
+        'edit-plan-btn',
+        'plan-summary-method',
+        'plan-summary-period',
         'runway-status-pill',
         'display-available',
         'display-income',
@@ -887,8 +910,12 @@
             return;
         }
 
+        state.hasSubmittedPlan =
+            true;
+
         saveState();
         revealRunwayExperience();
+        renderPlanSummary(model);
         renderRunwaySummary(model);
         renderDetailedDashboard(model);
 
@@ -905,8 +932,34 @@
     // 07. RUNWAY SUMMARY RENDERING
     // ==================================================
 
-    // 07.1 renderRunwaySummary()
-    // Use: Updates the compact dashboard shown beside the planner.
+    // 07.1 renderPlanSummary()
+    // Use: Shows the saved planning method and date window above the results.
+    function renderPlanSummary(model) {
+        const methodLabel =
+            state.mode === 'semester'
+                ? 'Semester'
+                : 'Monthly';
+
+        getElement(
+            'plan-summary-method'
+        ).textContent =
+            methodLabel;
+
+        getElement(
+            'plan-summary-period'
+        ).textContent =
+            formatDateDisplay(
+                model.fromDate
+            ) +
+            ' → ' +
+            formatDateDisplay(
+                model.toDate
+            );
+    }
+
+
+    // 07.2 renderRunwaySummary()
+    // Use: Updates the results-focused runway dashboard after a plan is submitted.
     function renderRunwaySummary(model) {
         getElement(
             'display-available'
@@ -1961,9 +2014,44 @@
     }
 
 
-    // 13.2 revealRunwayExperience()
-    // Use: Reveals summary and detailed dashboard only after a valid plan is submitted.
-    function revealRunwayExperience() {
+    // 13.2 setPlanningView()
+    // Use: Shows the full-width input experience and hides result sections.
+    function setPlanningView() {
+        const plannerShell =
+            getElement('planner');
+
+        plannerShell.classList.remove(
+            'results-mode'
+        );
+
+        plannerShell.dataset.viewMode =
+            'planning';
+
+        setSectionVisibility(
+            'runway-summary',
+            false
+        );
+
+        setSectionVisibility(
+            'dashboard-details',
+            false
+        );
+    }
+
+
+    // 13.3 setResultsView()
+    // Use: Hides the long input form and presents the full-width result experience.
+    function setResultsView() {
+        const plannerShell =
+            getElement('planner');
+
+        plannerShell.classList.add(
+            'results-mode'
+        );
+
+        plannerShell.dataset.viewMode =
+            'results';
+
         setSectionVisibility(
             'runway-summary',
             true
@@ -1976,18 +2064,40 @@
     }
 
 
-    // 13.3 hideRunwayExperience()
-    // Use: Returns the interface to the clean first-run planner state.
-    function hideRunwayExperience() {
-        setSectionVisibility(
-            'runway-summary',
-            false
-        );
+    // 13.4 revealRunwayExperience()
+    // Use: Switches the application from planning mode to results mode.
+    function revealRunwayExperience() {
+        setResultsView();
+    }
 
-        setSectionVisibility(
-            'dashboard-details',
-            false
-        );
+
+    // 13.5 hideRunwayExperience()
+    // Use: Returns the interface to the full-width planning view.
+    function hideRunwayExperience() {
+        setPlanningView();
+    }
+
+
+    // 13.6 handleEditPlan()
+    // Use: Restores the saved planner inputs so the user can correct or update them.
+    function handleEditPlan() {
+        state.hasSubmittedPlan =
+            false;
+
+        saveState();
+
+        setPlanningView();
+
+        getElement(
+            'planner-validation'
+        ).textContent = '';
+
+        getElement(
+            'planner'
+        ).scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     }
 
 
@@ -2025,6 +2135,13 @@
         ).addEventListener(
             'click',
             handleRunwayUpdate
+        );
+
+        getElement(
+            'edit-plan-btn'
+        ).addEventListener(
+            'click',
+            handleEditPlan
         );
 
         getElement(
@@ -2185,8 +2302,12 @@
             STORAGE_KEY
         );
 
-        localStorage.removeItem(
-            LEGACY_STORAGE_KEY
+        LEGACY_STORAGE_KEYS.forEach(
+            storageKey => {
+                localStorage.removeItem(
+                    storageKey
+                );
+            }
         );
 
         state =
@@ -2237,7 +2358,27 @@
         bindPrintEvent();
         bindLiveInputPersistence();
 
-        hideRunwayExperience();
+        const savedModel =
+            calculateModel();
+
+        if (
+            state.hasSubmittedPlan &&
+            savedModel.isValid &&
+            hasEnoughPlanningData()
+        ) {
+            setResultsView();
+            renderPlanSummary(
+                savedModel
+            );
+            renderRunwaySummary(
+                savedModel
+            );
+            renderDetailedDashboard(
+                savedModel
+            );
+        } else {
+            setPlanningView();
+        }
     }
 
 
