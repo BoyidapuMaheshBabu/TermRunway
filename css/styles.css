@@ -1752,6 +1752,136 @@ select:focus {
 
 
 /* ==================================================
+   DASHBOARD DETAILS — FULL WIDTH
+================================================== */
+
+.dashboard-details {
+    padding:
+        10px 0
+        70px;
+
+    border-top:
+        1px solid
+        var(--border);
+
+    background:
+        #f8fafc;
+}
+
+
+.dashboard-details-header {
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    padding:
+        18px 0
+        8px;
+}
+
+
+.dashboard-details-header h2 {
+    margin:
+        0;
+
+    font-size:
+        1.2rem;
+
+    letter-spacing:
+        -0.02em;
+}
+
+
+.dashboard-details-header > div > p:last-child {
+    max-width:
+        760px;
+
+    margin:
+        7px 0 0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        0.8rem;
+}
+
+
+.dashboard-chart-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        16px;
+
+    align-items:
+        stretch;
+}
+
+
+.dashboard-chart-grid
+.chart-card {
+    margin-top:
+        0;
+}
+
+
+.dashboard-details
+.analysis-card {
+    margin-top:
+        16px;
+}
+
+
+.dashboard-details-two-column {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap:
+        16px;
+
+    align-items:
+        start;
+}
+
+
+.dashboard-details-two-column
+.decision-card,
+.dashboard-details-two-column
+.goal-card {
+    margin-top:
+        16px;
+}
+
+
+.dashboard-details
+.dashboard-actions {
+    margin-top:
+        16px;
+}
+
+
+/* ==================================================
    FOOTER
 ================================================== */
 
