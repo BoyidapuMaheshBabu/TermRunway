@@ -35,17 +35,20 @@
     <header class="site-header">
         <div class="container header-inner">
 
-            <a class="brand" href="home.html">
-                TermRunway
+            <a class="brand" href="home.html" aria-label="TermRunway home">
+                <span class="brand-mark">TR</span>
+                <span>TermRunway</span>
             </a>
 
             <nav class="nav-links" aria-label="Primary navigation">
                 <a href="home.html">Home</a>
-                <a href="#planner">Plan</a>
+                <a class="active" href="#planner">Plan</a>
                 <a href="#runway-summary">Dashboard</a>
                 <a href="#tracking">Track</a>
                 <a href="#decisions">Decide</a>
             </nav>
+
+            <a class="header-cta" href="#planner">Build your runway</a>
 
         </div>
     </header>
@@ -57,36 +60,76 @@
         <section class="hero">
             <div class="container hero-grid">
 
-                <div>
+                <div class="hero-copy-wrap">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        Interactive student financial planner
+                    </div>
+
                     <p class="eyebrow">
-                        STUDENT FINANCIAL PLANNING
+                        BUILD YOUR FINANCIAL RUNWAY
                     </p>
 
                     <h1>
-                        Know where your money is going.
-                        Know whether it will last.
+                        Turn your money
+                        <span>into a plan you can follow.</span>
                     </h1>
 
                     <p class="hero-copy">
-                        Build a plan first. Then use the runway summary,
-                        dashboard, tracking, decisions, and savings tools
-                        to understand what your money can support.
+                        Enter what you have, what you expect to receive, and what you
+                        plan to spend. TermRunway turns those numbers into a timeline
+                        you can understand, update, and act on.
                     </p>
+
+                    <div class="hero-actions">
+                        <a class="primary-btn" href="#planner">
+                            Start your plan
+                            <span aria-hidden="true">→</span>
+                        </a>
+                        <a class="secondary-btn" href="home.html">
+                            Learn about TermRunway
+                        </a>
+                    </div>
+
+                    <div class="hero-proof">
+                        <span>Plan</span>
+                        <i aria-hidden="true"></i>
+                        <span>Forecast</span>
+                        <i aria-hidden="true"></i>
+                        <span>Track</span>
+                        <i aria-hidden="true"></i>
+                        <span>Decide</span>
+                    </div>
                 </div>
 
                 <div class="hero-note">
                     <span class="hero-note-label">
-                        CORE QUESTION
+                        THE CORE QUESTION
                     </span>
 
                     <strong>
-                        Will my money last until the end of my plan?
+                        “Will my money last until the end of my plan?”
                     </strong>
 
                     <span>
-                        TermRunway reveals the financial picture only after
-                        you create and update a plan.
+                        Build the plan below first. The runway summary appears
+                        after you submit a valid planning setup.
                     </span>
+
+                    <div class="hero-mini-stats">
+                        <div>
+                            <span>Available now</span>
+                            <strong>₹ —</strong>
+                        </div>
+                        <div>
+                            <span>Days remaining</span>
+                            <strong>—</strong>
+                        </div>
+                        <div>
+                            <span>Projected balance</span>
+                            <strong>₹ —</strong>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -99,6 +142,16 @@
             id="planner"
             data-view-mode="planning"
         >
+            <div class="planner-intro">
+                <div>
+                    <p class="section-kicker">BUILD YOUR PLAN</p>
+                    <h2>Five steps from numbers to runway.</h2>
+                </div>
+                <p>
+                    Work from top to bottom. Your entries are used together to
+                    calculate the financial picture shown in the dashboard.
+                </p>
+            </div>
 
             <div class="planner-column">
 
