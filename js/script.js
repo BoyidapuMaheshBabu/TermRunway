@@ -1,2877 +1,859 @@
-// ==========================================================
-// TERMRUNWAY VERSION 2
-// Student Financial Planning Dashboard
-//
-// Core model:
-//
-// Available Money Now
-//        +
-// Expected Future Income
-//        -
-// Remaining Planned Expenses
-//        =
-// Projected Balance
-//
-// Actual expenses are tracked separately so they can be
-// compared with the plan without double-counting them.
-//
-// ==========================================================
+/**
+ * TermRunway — Core Engine
+ * Architecture: Vanilla JavaScript, Chart.js, LocalStorage
+ * Model: Timeline-based Forward Financial Runway
+ */
 
+(function () {
+  'use strict';
 
-// ==========================================================
-// 1. STORAGE
-// ==========================================================
+  // --- Category Definitions ---
+  const CATEGORIES = [
+    { id: 'tuition', label: 'Tuition & Fees' },
+    { id: 'rent', label: 'Rent & Housing' },
+    { id: 'food', label: 'Food & Groceries' },
+    { id: 'utilities', label: 'Utilities & Internet' },
+    { id: 'transport', label: 'Transport & Travel' },
+    { id: 'books', label: 'Books & Academic Supplies' },
+    { id: 'entertainment', label: 'Personal & Lifestyle' },
+    { id: 'misc', label: 'Miscellaneous / Contingency' }
+  ];
 
-const STORAGE_KEY = "termRunwayV2";
+  const STORAGE_KEY = 'termrunway_state_v2';
 
-
-// ==========================================================
-// 2. DATA DEFINITIONS
-// ==========================================================
-
-const incomeFields = [
-    {
-        id: "income-scholarship",
-        label: "Scholarship"
+  // --- Default State ---
+  const defaultState = {
+    mode: 'semester', // 'semester' | 'monthly'
+    fromDate: '2026-06-01',
+    toDate: '2026-12-31',
+    availableNow: 10000,
+    expectedIncome: 0,
+    plannedExpenses: {
+      tuition: 0,
+      rent: 0,
+      food: 3000,
+      utilities: 0,
+      transport: 0,
+      books: 0,
+      entertainment: 0,
+      misc: 0
     },
-    {
-        id: "income-part-time",
-        label: "Part-time job"
-    },
-    {
-        id: "income-parents",
-        label: "Parents support"
-    },
-    {
-        id: "income-freelance",
-        label: "Freelance / gigs"
-    },
-    {
-        id: "income-other",
-        label: "Other income"
+    transactions: [
+      {
+        id: 'txn_init_demo',
+        date: '2026-07-15',
+        category: 'food',
+        desc: 'Mid-term food supplies & meal card reload',
+        amount: 6000
+      }
+    ],
+    savingsGoal: {
+      name: 'Semester Buffer',
+      target: 10000,
+      saved: 2000
     }
-];
+  };
 
+  let state = loadState();
 
-const expenseFields = [
-    {
-        id: "expense-rent",
-        label: "Rent / hostel",
-        key: "rent"
-    },
-    {
-        id: "expense-food",
-        label: "Food",
-        key: "food"
-    },
-    {
-        id: "expense-transport",
-        label: "Transport",
-        key: "transport"
-    },
-    {
-        id: "expense-utilities",
-        label: "Utilities",
-        key: "utilities"
-    },
-    {
-        id: "expense-entertainment",
-        label: "Entertainment",
-        key: "entertainment"
-    },
-    {
-        id: "expense-other",
-        label: "Other expenses",
-        key: "other"
+  // --- Chart Instances ---
+  let forecastChartInstance = null;
+  let cashFlowChartInstance = null;
+  let distributionChartInstance = null;
+
+  // --- Date Math Helpers ---
+  function parseDate(dStr) {
+    if (!dStr) return null;
+    const parts = dStr.split('-');
+    if (parts.length !== 3) return null;
+    return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+  }
+
+  function formatDateIso(d) {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function formatDateDisplay(d) {
+    if (!d || isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function getDiffDays(d1, d2) {
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+    const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+    return Math.round((utc2 - utc1) / MS_PER_DAY);
+  }
+
+  function formatCurrency(num) {
+    const val = Number(num) || 0;
+    return val.toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  // --- State Persistence ---
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return JSON.parse(JSON.stringify(defaultState));
+      const parsed = JSON.parse(raw);
+      return {
+        ...defaultState,
+        ...parsed,
+        plannedExpenses: { ...defaultState.plannedExpenses, ...(parsed.plannedExpenses || {}) },
+        savingsGoal: { ...defaultState.savingsGoal, ...(parsed.savingsGoal || {}) }
+      };
+    } catch (e) {
+      console.warn('Failed to load local storage state:', e);
+      return JSON.parse(JSON.stringify(defaultState));
     }
-];
+  }
 
-
-const categoryNames = {
-    rent: "Rent / hostel",
-    food: "Food",
-    transport: "Transport",
-    utilities: "Utilities",
-    entertainment: "Entertainment",
-    other: "Other expenses"
-};
-
-
-// ==========================================================
-// 3. APPLICATION STATE
-// ==========================================================
-
-let isMonthlyMode = false;
-
-let transactions = [];
-
-let savedGoal = null;
-
-let cashflowChart = null;
-
-let expenseChart = null;
-
-let forecastChart = null;
-
-
-// ==========================================================
-// 4. DOM HELPER
-// ==========================================================
-
-function $(id) {
-    return document.getElementById(id);
-}
-
-
-// ==========================================================
-// 5. NUMBER HELPER
-// ==========================================================
-
-function getNumber(id) {
-
-    const element = $(id);
-
-    if (!element) {
-        return 0;
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error('Could not save to localStorage:', e);
     }
+  }
 
-    const value = Number.parseFloat(element.value);
+  // =========================================================================
+  // CORE FINANCIAL MODEL
+  // =========================================================================
+  function calculateModel() {
+    const fromDate = parseDate(state.fromDate);
+    const toDate = parseDate(state.toDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    if (!Number.isFinite(value)) {
-        return 0;
+    if (!fromDate || !toDate || toDate <= fromDate) {
+      return {
+        isValid: false,
+        error: 'Invalid planning period. "To Date" must be strictly after "From Date".'
+      };
     }
 
-    return Math.max(0, value);
-}
-
-
-// ==========================================================
-// 6. MONEY FORMAT
-// ==========================================================
-
-function formatMoney(value) {
-
-    const amount = Number(value) || 0;
-
-    return new Intl.NumberFormat("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }).format(amount);
-}
-
-
-// ==========================================================
-// 7. COMPACT MONEY FORMAT
-// ==========================================================
-
-function formatCompactMoney(value) {
-
-    const amount = Number(value) || 0;
-
-    return new Intl.NumberFormat("en-IN", {
-        notation: amount >= 100000 ? "compact" : "standard",
-        maximumFractionDigits: amount >= 100000 ? 1 : 0
-    }).format(amount);
-}
-
-
-// ==========================================================
-// 8. TEXT HELPER
-// ==========================================================
-
-function setText(id, value) {
-
-    const element = $(id);
-
-    if (element) {
-        element.textContent = value;
-    }
-}
-
-
-// ==========================================================
-// 9. ESCAPE HTML
-// ==========================================================
-
-function escapeHtml(value) {
-
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-
-// ==========================================================
-// 10. DATE HELPERS
-// ==========================================================
-
-function localToday() {
-
-    const now = new Date();
-
-    return new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-    );
-}
-
-
-function parseDate(value) {
-
-    if (!value) {
-        return null;
-    }
-
-    const parts = value.split("-").map(Number);
-
-    if (parts.length !== 3) {
-        return null;
-    }
-
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
-
-    const date = new Date(
-        year,
-        month - 1,
-        day
-    );
-
-    if (Number.isNaN(date.getTime())) {
-        return null;
-    }
-
-    return date;
-}
-
-
-function dateToInputValue(date) {
-
-    const year = date.getFullYear();
-
-    const month = String(
-        date.getMonth() + 1
-    ).padStart(2, "0");
-
-    const day = String(
-        date.getDate()
-    ).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-}
-
-
-// ==========================================================
-// 11. DAYS BETWEEN TWO DATES
-// ==========================================================
-
-function daysBetween(startDate, endDate) {
-
-    const millisecondsPerDay = 86400000;
-
-    return Math.max(
-        0,
-        Math.ceil(
-            (
-                endDate.getTime() -
-                startDate.getTime()
-            ) /
-            millisecondsPerDay
-        )
-    );
-}
-
-
-// ==========================================================
-// 12. DAYS REMAINING
-// ==========================================================
-
-function getDaysRemaining(
-    startDateValue,
-    endDateValue
-) {
-
-    const today = localToday();
-
-    const planStart =
-        parseDate(startDateValue) ||
-        today;
-
-    const endDate =
-        parseDate(endDateValue);
-
-    if (
-        !endDate ||
-        endDate <= planStart
-    ) {
-        return 0;
-    }
-
-    const effectiveStart =
-        planStart > today
-            ? planStart
-            : today;
-
-    return daysBetween(
-        effectiveStart,
-        endDate
-    );
-}
-
-
-// ==========================================================
-// 13. EXACT CALENDAR-MONTH PROJECTION
-//
-// This does NOT use:
-//
-// 365 / 12
-//
-// Instead, each month is calculated according to its
-// actual number of calendar days.
-//
-// Example:
-//
-// Monthly expense = ₹3000
-//
-// 30 days in month
-//
-// 15 days remaining
-//
-// Projection = ₹3000 × 15 / 30
-// ==========================================================
-
-function projectMonthlyAmount(
-    monthlyAmount,
-    startDateValue,
-    endDateValue
-) {
-
-    if (monthlyAmount <= 0) {
-        return 0;
-    }
-
-    const startDate =
-        parseDate(startDateValue) ||
-        localToday();
-
-    const endDate = parseDate(
-        endDateValue
-    );
-
-    if (
-        !endDate ||
-        endDate <= startDate
-    ) {
-        return 0;
-    }
-
-    let cursor = new Date(
-        startDate
-    );
-
-    let projectedAmount = 0;
-
-    const millisecondsPerDay = 86400000;
-
-    while (cursor < endDate) {
-
-        const year =
-            cursor.getFullYear();
-
-        const month =
-            cursor.getMonth();
-
-        const daysInMonth =
-            new Date(
-                year,
-                month + 1,
-                0
-            ).getDate();
-
-        // First day of next month.
-        const nextMonth =
-            new Date(
-                year,
-                month + 1,
-                1
-            );
-
-        // We calculate [cursor, periodEnd)
-        const periodEnd =
-            endDate < nextMonth
-                ? endDate
-                : nextMonth;
-
-        const daysCovered =
-            Math.max(
-                0,
-                Math.ceil(
-                    (
-                        periodEnd.getTime() -
-                        cursor.getTime()
-                    ) /
-                    millisecondsPerDay
-                )
-            );
-
-        projectedAmount +=
-            monthlyAmount *
-            (
-                daysCovered /
-                daysInMonth
-            );
-
-        cursor = nextMonth;
-    }
-
-    return projectedAmount;
-}
-
-
-// ==========================================================
-// 14. MODE SWITCH
-// ==========================================================
-
-function setMode(monthly) {
-
-    isMonthlyMode = monthly;
-
-    $("btn-monthly")
-        .classList
-        .toggle(
-            "active",
-            monthly
-        );
-
-    $("btn-semester")
-        .classList
-        .toggle(
-            "active",
-            !monthly
-        );
-
-    if (monthly) {
-
-        $("mode-description").textContent =
-            "Use recurring monthly income and expenses for the remaining calendar period.";
-
-        $("income-desc").textContent =
-            "Enter your average monthly income.";
-
-        $("expense-desc").textContent =
-            "Enter your average monthly expenses.";
-
-    } else {
-
-        $("mode-description").textContent =
-            "Enter amounts that cover your whole semester.";
-
-        $("income-desc").textContent =
-            "Enter income you expect to receive during the semester.";
-
-        $("expense-desc").textContent =
-            "Enter your estimated expenses for the semester.";
-    }
-
-    saveData();
-}
-
-
-$("btn-semester").addEventListener(
-    "click",
-    () => setMode(false)
-);
-
-
-$("btn-monthly").addEventListener(
-    "click",
-    () => setMode(true)
-);
-
-
-// ==========================================================
-// 15. INPUT TOTALS
-// ==========================================================
-
-function getIncomeTotal() {
-
-    return incomeFields.reduce(
-        (total, field) => {
-
-            return (
-                total +
-                getNumber(field.id)
-            );
-
-        },
-        0
-    );
-}
-
-
-function getExpenseTotal() {
-
-    return expenseFields.reduce(
-        (total, field) => {
-
-            return (
-                total +
-                getNumber(field.id)
-            );
-
-        },
-        0
-    );
-}
-
-
-// ==========================================================
-// 16. PLANNED CATEGORY DATA
-// ==========================================================
-
-function getPlannedCategories(
-    startDateValue,
-    endDateValue
-) {
-
-    return expenseFields.map(
-        field => {
-
-            const entered =
-                getNumber(field.id);
-
-            const planned =
-                isMonthlyMode
-                    ? projectMonthlyAmount(
-                        entered,
-                        startDateValue,
-                        endDateValue
-                    )
-                    : entered;
-
-            return {
-                key: field.key,
-                label: field.label,
-                planned
-            };
-        }
-    );
-}
-
-
-// ==========================================================
-// 17. ACTUAL CATEGORY DATA
-// ==========================================================
-
-function getActualCategories(
-    startDateValue,
-    endDateValue
-) {
-
-    const planStart =
-        parseDate(startDateValue) ||
-        localToday();
-
-    const planEnd =
-        parseDate(endDateValue);
-
-    const today =
-        localToday();
-
-    return expenseFields.map(
-        field => {
-
-            const actual =
-                transactions.reduce(
-                    (
-                        total,
-                        transaction
-                    ) => {
-
-                        const transactionDate =
-                            parseDate(
-                                transaction.date
-                            );
-
-                        const isWithinPeriod =
-                            transactionDate &&
-                            transactionDate >= planStart &&
-                            planEnd &&
-                            transactionDate <= planEnd &&
-                            transactionDate <= today;
-
-                        if (
-                            transaction.category ===
-                            field.key &&
-                            isWithinPeriod &&
-                            Number.isFinite(
-                                transaction.amount
-                            )
-                        ) {
-
-                            return (
-                                total +
-                                Math.max(
-                                    0,
-                                    transaction.amount
-                                )
-                            );
-                        }
-
-                        return total;
-                    },
-                    0
-                );
-
-            return {
-                key: field.key,
-                label: field.label,
-                actual
-            };
-        }
-    );
-}
-
-
-// ==========================================================
-// 18. COMBINE PLANNED + ACTUAL
-// ==========================================================
-
-function getCategoryRows(
-    startDateValue,
-    endDateValue
-) {
-
-    const planned =
-        getPlannedCategories(
-            startDateValue,
-            endDateValue
-        );
-
-    const actual =
-        getActualCategories(
-            startDateValue,
-            endDateValue
-        );
-
-
-    return planned.map(
-        plannedItem => {
-
-            const actualItem =
-                actual.find(
-                    item =>
-                        item.key ===
-                        plannedItem.key
-                );
-
-            const actualAmount =
-                actualItem
-                    ? actualItem.actual
-                    : 0;
-
-            return {
-
-                key:
-                    plannedItem.key,
-
-                label:
-                    plannedItem.label,
-
-                planned:
-                    plannedItem.planned,
-
-                actual:
-                    actualAmount,
-
-                remaining:
-                    Math.max(
-                        0,
-                        plannedItem.planned -
-                        actualAmount
-                    ),
-
-                variance:
-                    plannedItem.planned -
-                    actualAmount
-
-            };
-        }
-    );
-}
-
-
-// ==========================================================
-// 19. MAIN FINANCIAL MODEL
-// ==========================================================
-
-function calculateModel() {
-
-    const availableNow =
-        getNumber(
-            "available-money"
-        );
-
-    const startDateValue =
-        $("planning-start").value;
-
-    const endDateValue =
-        $("semester-end").value;
-
-    const startDate =
-        parseDate(
-            startDateValue
-        );
-
-    const endDate =
-        parseDate(
-            endDateValue
-        );
-
-    const daysRemaining =
-        getDaysRemaining(
-            startDateValue,
-            endDateValue
-        );
-
-
-    let expectedIncome = 0;
-
-    let plannedExpenses = 0;
-
-
-    // ======================================================
-    // MONTHLY PLAN
-    // ======================================================
-
-    if (isMonthlyMode) {
-
-        const monthlyIncome =
-            getIncomeTotal();
-
-        const monthlyExpenses =
-            getExpenseTotal();
-
-
-        expectedIncome =
-            projectMonthlyAmount(
-                monthlyIncome,
-                startDateValue,
-                endDateValue
-            );
-
-
-        plannedExpenses =
-            projectMonthlyAmount(
-                monthlyExpenses,
-                startDateValue,
-                endDateValue
-            );
-
-    }
-
-
-    // ======================================================
-    // SEMESTER PLAN
-    // ======================================================
-
-    else {
-
-        expectedIncome =
-            getIncomeTotal();
-
-
-        plannedExpenses =
-            getExpenseTotal();
-
-    }
-
-
-    // ======================================================
-    // PROJECTED BALANCE
-    //
-    // Actual expenses are NOT subtracted again here.
-    //
-    // Reason:
-    //
-    // "Available money now" is already the money the
-    // student currently has.
-    //
-    // Therefore previously recorded actual transactions
-    // should be used for analysis, not deducted again.
-    // ======================================================
-
-    const projectedBalance =
-        availableNow +
-        expectedIncome -
-        plannedExpenses;
-
-
-    // ======================================================
-    // ACTUAL SPENDING
-    // ======================================================
-
-    const actualExpenses =
-        transactions.reduce(
-            (
-                total,
-                transaction
-            ) => {
-
-                return (
-                    total +
-                    transaction.amount
-                );
-
-            },
-            0
-        );
-
-
-    // ======================================================
-    // DAILY SAFE SPENDING
-    // ======================================================
-
-    const dailySafeSpending =
-        (
-            daysRemaining > 0 &&
-            projectedBalance > 0
-        )
-            ? projectedBalance /
-              daysRemaining
-
-            : 0;
-
-
-    // ======================================================
-    // CATEGORY DATA
-    // ======================================================
-
-    const categoryRows =
-        getCategoryRows(
-            startDateValue,
-            endDateValue
-        );
-
-
-    // ======================================================
-    // FINANCIAL HEALTH
-    // ======================================================
-
-    const score =
-        calculateHealthScore({
-            availableNow,
-            expectedIncome,
-            plannedExpenses,
-            projectedBalance,
-            daysRemaining,
-            dailySafeSpending,
-            categoryRows
-        });
-
-
-    return {
-
-        availableNow,
-
-        expectedIncome,
-
-        plannedExpenses,
-
-        projectedBalance,
-
-        actualExpenses,
-
-        dailySafeSpending,
-
-        daysRemaining,
-
-        startDate,
-
-        startDateValue,
-
-        endDate,
-
-        endDateValue,
-
-        categoryRows,
-
-        score
-
-    };
-}
-
-
-// ==========================================================
-// 20. FINANCIAL HEALTH SCORE
-// ==========================================================
-
-function calculateHealthScore(model) {
-
-    const {
-
-        availableNow,
-
-        expectedIncome,
-
-        plannedExpenses,
-
-        projectedBalance,
-
-        daysRemaining,
-
-        dailySafeSpending,
-
-        categoryRows
-
-    } = model;
-
-
-    let score = 0;
-
-
-    const resources =
-        availableNow +
-        expectedIncome;
-
-
-    // ------------------------------------------------------
-    // 30 points — positive projected balance
-    // ------------------------------------------------------
-
-    if (
-        projectedBalance > 0
-    ) {
-
-        score += 30;
-
-    } else if (
-        projectedBalance === 0
-    ) {
-
-        score += 15;
-
-    }
-
-
-    // ------------------------------------------------------
-    // 25 points — financial buffer
-    // ------------------------------------------------------
-
-    if (
-        resources > 0
-    ) {
-
-        const bufferRatio =
-            projectedBalance /
-            resources;
-
-
-        if (
-            bufferRatio >= 0.20
-        ) {
-
-            score += 25;
-
-        } else if (
-            bufferRatio >= 0.10
-        ) {
-
-            score += 20;
-
-        } else if (
-            bufferRatio > 0
-        ) {
-
-            score += 12;
-
-        }
-
-    }
-
-
-    // ------------------------------------------------------
-    // 20 points — actual spending discipline
-    // ------------------------------------------------------
-
-    const categoriesOverBudget =
-        categoryRows.filter(
-            row =>
-                row.planned > 0 &&
-                row.actual >
-                row.planned
-        ).length;
-
-
-    if (
-        categoriesOverBudget === 0
-    ) {
-
-        score += 20;
-
-    } else if (
-        categoriesOverBudget <= 2
-    ) {
-
-        score += 10;
-
-    }
-
-
-    // ------------------------------------------------------
-    // 10 points — no extreme concentration
-    // ------------------------------------------------------
-
-    if (
-        plannedExpenses > 0
-    ) {
-
-        const largest =
-            [...categoryRows]
-                .sort(
-                    (a, b) =>
-                        b.planned -
-                        a.planned
-                )[0];
-
-
-        if (largest) {
-
-            const largestShare =
-                largest.planned /
-                plannedExpenses;
-
-
-            if (
-                largestShare <= 0.40
-            ) {
-
-                score += 10;
-
-            } else if (
-                largestShare <= 0.55
-            ) {
-
-                score += 6;
-
-            }
-
-        }
-
-    }
-
-
-    // ------------------------------------------------------
-    // 15 points — positive runway
-    // ------------------------------------------------------
-
-    if (
-        daysRemaining > 0 &&
-        dailySafeSpending > 0
-    ) {
-
-        score += 15;
-
-    }
-
-
-    return Math.max(
-        0,
-        Math.min(
-            100,
-            Math.round(score)
-        )
-    );
-}
-
-
-// ==========================================================
-// 21. HEALTH LABEL
-// ==========================================================
-
-function getHealthLabel(score) {
-
-    if (score >= 90) {
-        return "Excellent financial position.";
-    }
-
-    if (score >= 80) {
-        return "Healthy financial plan.";
-    }
-
-    if (score >= 60) {
-        return "Moderate financial position.";
-    }
-
-    if (score >= 40) {
-        return "Your plan needs attention.";
-    }
-
-    return "Your current plan needs improvement.";
-}
-
-
-// ==========================================================
-// 22. UPDATE RUNWAY STATUS
-// ==========================================================
-
-function updateRunwayStatus(model) {
-
-    const pill =
-        $("status-pill");
-
-    const card =
-        $("runway-status-card");
-
-
-    if (
-        !model.endDate ||
-        model.daysRemaining <= 0
-    ) {
-
-        pill.className =
-            "status-pill neutral";
-
-        pill.textContent =
-            "Waiting for plan";
-
-        card.className =
-            "status-card neutral";
-
-
-        setText(
-            "runway-status-title",
-            "Add a valid planning period."
-        );
-
-
-        setText(
-            "runway-status-message",
-            "Choose a From and To date so TermRunway can calculate your runway."
-        );
-
-
-        return;
-    }
-
-
-    if (
-        model.projectedBalance > 0
-    ) {
-
-        pill.className =
-            "status-pill success";
-
-        pill.textContent =
-            "Sustainable";
-
-        card.className =
-            "status-card success";
-
-
-        setText(
-            "runway-status-title",
-            "Your current plan is sustainable."
-        );
-
-
-        setText(
-            "runway-status-message",
-            `You are projected to finish with ₹${formatMoney(model.projectedBalance)} after planned income and expenses.`
-        );
-
-
-        return;
-    }
-
-
-    if (
-        model.projectedBalance === 0
-    ) {
-
-        pill.className =
-            "status-pill warning";
-
-        pill.textContent =
-            "No Buffer";
-
-        card.className =
-            "status-card warning";
-
-
-        setText(
-            "runway-status-title",
-            "Your plan reaches ₹0 at the end."
-        );
-
-
-        setText(
-            "runway-status-message",
-            "Your planned money exactly covers your projected expenses. There is no financial buffer."
-        );
-
-
-        return;
-    }
-
-
-    pill.className =
-        "status-pill danger";
-
-    pill.textContent =
-        "Shortfall";
-
-    card.className =
-        "status-card danger";
-
-
-    setText(
-        "runway-status-title",
-        "Your planned spending is higher than your money."
-    );
-
-
-    setText(
-        "runway-status-message",
-        `You are projected to have a shortfall of ₹${formatMoney(Math.abs(model.projectedBalance))}.`
-    );
-}
-
-
-// ==========================================================
-// 23. UPDATE DASHBOARD
-// ==========================================================
-
-function updateDashboard(model) {
-
-    setText(
-        "display-available",
-        formatMoney(
-            model.availableNow
-        )
-    );
-
-
-    setText(
-        "display-income",
-        formatMoney(
-            model.expectedIncome
-        )
-    );
-
-
-    setText(
-        "display-expenses",
-        formatMoney(
-            model.plannedExpenses
-        )
-    );
-
-
-    setText(
-        "display-balance",
-        formatMoney(
-            model.projectedBalance
-        )
-    );
-
-
-    setText(
-        "display-balance-secondary",
-        formatMoney(
-            model.projectedBalance
-        )
-    );
-
-
-    setText(
-        "display-days",
-        model.daysRemaining > 0
-            ? model.daysRemaining
-            : "—"
-    );
-
-
-    setText(
-        "display-daily",
-        formatMoney(
-            model.dailySafeSpending
-        )
-    );
-
-
-    setText(
-        "health-score",
-        model.score
-    );
-
-
-    $("score-bar").style.width =
-        `${model.score}%`;
-
-
-    setText(
-        "health-label",
-        getHealthLabel(
-            model.score
-        )
-    );
-
-
-    updateRunwayStatus(
-        model
-    );
-
-
-    renderSpendingAnalysis(
-        model.categoryRows,
-        model.plannedExpenses,
-        model.actualExpenses
-    );
-
-
-    updateCharts(
-        model
-    );
-
-
-    renderGoal();
-}
-
-
-// ==========================================================
-// 24. SPENDING ANALYSIS
-// ==========================================================
-
-function renderSpendingAnalysis(
-    categoryRows,
-    totalPlanned,
-    totalActual
-) {
-
-    const container =
-        $("spending-analysis");
-
-
-    setText(
-        "analysis-total",
-        `Planned ₹${formatMoney(totalPlanned)} | Actual ₹${formatMoney(totalActual)}`
-    );
-
-
-    const rows =
-        categoryRows.filter(
-            row =>
-                row.planned > 0 ||
-                row.actual > 0
-        );
-
-
-    if (
-        rows.length === 0
-    ) {
-
-        container.innerHTML =
-            `
-            <p class="empty">
-                No spending data available yet.
-            </p>
-            `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        rows.map(
-            row => {
-
-                const usagePercentage =
-                    row.planned > 0
-
-                        ? (
-                            row.actual /
-                            row.planned
-                        ) * 100
-
-                        : 100;
-
-
-                let statusText;
-
-
-                if (
-                    row.planned > 0 &&
-                    row.actual > row.planned
-                ) {
-
-                    statusText =
-                        `Over by ₹${formatMoney(
-                            row.actual -
-                            row.planned
-                        )}`;
-
-                } else if (
-                    row.planned > 0
-                ) {
-
-                    statusText =
-                        `₹${formatMoney(
-                            row.planned -
-                            row.actual
-                        )} remaining`;
-
-                } else {
-
-                    statusText =
-                        "Unplanned spending";
-
-                }
-
-
-                return `
-
-                    <div class="analysis-row">
-
-                        <div class="analysis-top">
-
-                            <span class="analysis-label">
-                                ${escapeHtml(
-                                    row.label
-                                )}
-                            </span>
-
-                            <span class="analysis-value">
-                                Actual ₹${formatMoney(
-                                    row.actual
-                                )}
-                            </span>
-
-                        </div>
-
-
-                        <div class="progress-track">
-
-                            <div
-                                class="progress-bar"
-                                style="width:${Math.min(
-                                    100,
-                                    Math.max(
-                                        0,
-                                        usagePercentage
-                                    )
-                                )}%"
-                            ></div>
-
-                        </div>
-
-
-                        <div class="analysis-top">
-
-                            <span class="analysis-value">
-                                Planned:
-                                ₹${formatMoney(
-                                    row.planned
-                                )}
-                            </span>
-
-                            <span class="analysis-value">
-                                ${escapeHtml(
-                                    statusText
-                                )}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                `;
-            }
-        ).join("");
-}
-
-
-// ==========================================================
-// 25. FORECAST DATA
-// ==========================================================
-
-function buildForecast(model) {
-
-    const labels = [];
-
-    const balances = [];
-
-    const startDate =
-        localToday();
-
-    const endDate =
-        model.endDate;
-
-
-    if (
-        !endDate ||
-        endDate <= startDate
-    ) {
-
-        return {
-
-            labels: [
-                "No plan"
-            ],
-
-            balances: [
-                model.availableNow
-            ]
-
-        };
-    }
-
-
-    const totalDays =
-        daysBetween(
-            startDate,
-            endDate
-        );
-
-
-    const points = 7;
-
-
-    for (
-        let index = 0;
-        index < points;
-        index++
-    ) {
-
-        const progress =
-            index /
-            (points - 1);
-
-
-        const daysFromStart =
-            Math.round(
-                totalDays *
-                progress
-            );
-
-
-        const currentDate =
-            new Date(
-                startDate.getTime() +
-                daysFromStart *
-                86400000
-            );
-
-
-        labels.push(
-            currentDate.toLocaleDateString(
-                "en-IN",
-                {
-                    day: "numeric",
-                    month: "short"
-                }
-            )
-        );
-
-
-        const incomeAtPoint =
-            model.expectedIncome *
-            progress;
-
-
-        const expensesAtPoint =
-            model.plannedExpenses *
-            progress;
-
-
-        const projectedBalance =
-            model.availableNow +
-            incomeAtPoint -
-            expensesAtPoint;
-
-
-        balances.push(
-            Number(
-                projectedBalance.toFixed(2)
-            )
-        );
-
-    }
-
-
-    return {
-        labels,
-        balances
-    };
-}
-
-
-// ==========================================================
-// 26. UPDATE CHARTS
-// ==========================================================
-
-function updateCharts(model) {
-
-    if (
-        typeof Chart ===
-        "undefined"
-    ) {
-
-        console.warn(
-            "Chart.js has not loaded."
-        );
-
-        return;
-    }
-
-
-    // ------------------------------------------------------
-    // Destroy previous chart instances
-    // ------------------------------------------------------
-
-    if (cashflowChart) {
-        cashflowChart.destroy();
-    }
-
-
-    if (expenseChart) {
-        expenseChart.destroy();
-    }
-
-
-    if (forecastChart) {
-        forecastChart.destroy();
-    }
-
-
-    // ======================================================
-    // CASH FLOW CHART
-    // ======================================================
-
-    cashflowChart =
-        new Chart(
-            $("cashflow-chart"),
-            {
-
-                type: "bar",
-
-                data: {
-
-                    labels: [
-                        "Available now",
-                        "Expected income",
-                        "Planned expenses",
-                        "Actual spent"
-                    ],
-
-                    datasets: [
-
-                        {
-
-                            label:
-                                "Amount",
-
-                            data: [
-
-                                model.availableNow,
-
-                                model.expectedIncome,
-
-                                model.plannedExpenses,
-
-                                model.actualExpenses
-
-                            ]
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    plugins: {
-
-                        legend: {
-                            display: false
-                        }
-
-                    },
-
-                    scales: {
-
-                        y: {
-
-                            beginAtZero: true,
-
-                            ticks: {
-
-                                callback:
-                                    value =>
-                                        `₹${formatCompactMoney(
-                                            value
-                                        )}`
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-        );
-
-
-    // ======================================================
-    // EXPENSE CHART
-    //
-    // If actual spending exists, use ACTUAL.
-    // Otherwise show planned spending.
-    // ======================================================
-
-    const expenseRows =
-        model.categoryRows.filter(
-            row =>
-                row.planned > 0 ||
-                row.actual > 0
-        );
-
-
-    const labels =
-        expenseRows.map(
-            row =>
-                row.label
-        );
-
-
-    const values =
-        expenseRows.map(
-            row => {
-
-                if (
-                    row.actual > 0
-                ) {
-
-                    return row.actual;
-
-                }
-
-                return row.planned;
-
-            }
-        );
-
-
-    expenseChart =
-        new Chart(
-            $("expense-chart"),
-            {
-
-                type:
-                    "doughnut",
-
-                data: {
-
-                    labels,
-
-                    datasets: [
-
-                        {
-
-                            label:
-                                "Spending",
-
-                            data:
-                                values
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive:
-                        true,
-
-                    maintainAspectRatio:
-                        false,
-
-                    plugins: {
-
-                        legend: {
-
-                            position:
-                                "bottom"
-
-                        }
-
-                    }
-
-                }
-
-            }
-        );
-
-
-    // ======================================================
-    // FORECAST CHART
-    // ======================================================
-
-    const forecast =
-        buildForecast(
-            model
-        );
-
-
-    forecastChart =
-        new Chart(
-            $("forecast-chart"),
-            {
-
-                type:
-                    "line",
-
-                data: {
-
-                    labels:
-                        forecast.labels,
-
-                    datasets: [
-
-                        {
-
-                            label:
-                                "Projected balance",
-
-                            data:
-                                forecast.balances,
-
-                            tension:
-                                0.25,
-
-                            fill:
-                                true,
-
-                            pointRadius:
-                                3
-
-                        }
-
-                    ]
-
-                },
-
-                options: {
-
-                    responsive:
-                        true,
-
-                    maintainAspectRatio:
-                        false,
-
-                    plugins: {
-
-                        legend: {
-
-                            display:
-                                false
-
-                        }
-
-                    },
-
-                    scales: {
-
-                        y: {
-
-                            ticks: {
-
-                                callback:
-                                    value =>
-                                        `₹${formatCompactMoney(
-                                            value
-                                        )}`
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-        );
-
-}
-
-
-// ==========================================================
-// 27. AFFORDABILITY CHECK
-// ==========================================================
-
-function checkAffordability() {
-
-    const amount =
-        getNumber(
-            "purchase-amount"
-        );
-
-
-    const purchaseName =
-        $("purchase-name")
-            .value
-            .trim() ||
-        "This purchase";
-
-
-    const result =
-        $("affordability-result");
-
-
-    if (
-        amount <= 0
-    ) {
-
-        result.className =
-            "result-box warning";
-
-
-        result.innerHTML =
-            `
-            <strong>
-                Enter a purchase amount.
-            </strong>
-
-            <span>
-                TermRunway needs a price to
-                calculate the impact.
-            </span>
-            `;
-
-        return;
-    }
-
-
-    const model =
-        calculateModel();
-
-
-    const balanceAfter =
-        model.projectedBalance -
-        amount;
-
-
-    if (
-        balanceAfter >= 0
-    ) {
-
-        result.className =
-            "result-box success";
-
-
-        result.innerHTML =
-            `
-            <strong>
-                ${escapeHtml(
-                    purchaseName
-                )}
-                fits within your projected balance.
-            </strong>
-
-            <span>
-                Projected balance after purchase:
-                ₹${formatMoney(
-                    balanceAfter
-                )}.
-            </span>
-
-            <span>
-                This purchase uses
-                ${(
-                    model.projectedBalance > 0
-                        ? (
-                            amount /
-                            model.projectedBalance
-                        ) * 100
-                        : 100
-                ).toFixed(1)}%
-                of your projected remaining balance.
-            </span>
-            `;
-
-    } else {
-
-        result.className =
-            "result-box danger";
-
-
-        result.innerHTML =
-            `
-            <strong>
-                ${escapeHtml(
-                    purchaseName
-                )}
-                would create a projected shortfall.
-            </strong>
-
-            <span>
-                Balance after purchase:
-                -₹${formatMoney(
-                    Math.abs(
-                        balanceAfter
-                    )
-                )}.
-            </span>
-
-            <span>
-                Review the purchase or
-                adjust your financial plan.
-            </span>
-            `;
-    }
-
-}
-
-
-// ==========================================================
-// 28. ADD ACTUAL EXPENSE
-// ==========================================================
-
-function addTransaction() {
-
-    const amount =
-        getNumber(
-            "transaction-amount"
-        );
-
-
-    const date =
-        $("transaction-date")
-            .value ||
-        dateToInputValue(
-            localToday()
-        );
-
-
-    const category =
-        $("transaction-category")
-            .value;
-
-
-    const description =
-        $("transaction-description")
-            .value
-            .trim() ||
-        "Expense";
-
-
-    if (
-        amount <= 0
-    ) {
-
-        $("validation-message")
-            .textContent =
-            "Enter an expense amount greater than ₹0.";
-
-        return;
-    }
-
-
-    transactions.push({
-
-        id:
-            (
-                typeof crypto !==
-                "undefined" &&
-                typeof crypto.randomUUID ===
-                "function"
-            )
-                ? crypto.randomUUID()
-                : `${Date.now()}-${Math.random()}`,
-
-        date,
-
-        category,
-
-        description,
-
-        amount
-
+    const totalDays = Math.max(1, getDiffDays(fromDate, toDate));
+    
+    // Effective forecast start:
+    // If fromDate is in the past, forecast starts today.
+    // If fromDate is in the future, forecast starts on fromDate.
+    const isFromPast = fromDate <= today;
+    const forecastStartDate = isFromPast ? (today > toDate ? toDate : today) : fromDate;
+    const pastDays = isFromPast ? Math.max(0, getDiffDays(fromDate, forecastStartDate)) : 0;
+    const remainingDays = Math.max(0, getDiffDays(forecastStartDate, toDate));
+
+    // Filter actual recorded transactions:
+    // 1. Transaction date >= fromDate
+    // 2. Transaction date <= toDate
+    // 3. Transaction date <= today (no future transactions counted as actual spend)
+    const validTransactions = state.transactions.filter(t => {
+      const tDate = parseDate(t.date);
+      if (!tDate) return false;
+      return tDate >= fromDate && tDate <= toDate && tDate <= today;
     });
 
+    const actualByCategory = {};
+    CATEGORIES.forEach(c => (actualByCategory[c.id] = 0));
+    let totalActualSpent = 0;
 
-    $("transaction-amount")
-        .value = "";
+    validTransactions.forEach(t => {
+      const amt = Number(t.amount) || 0;
+      if (actualByCategory[t.category] !== undefined) {
+        actualByCategory[t.category] += amt;
+      }
+      totalActualSpent += amt;
+    });
 
+    // Whole Period Planned & Remaining Future Planned
+    const wholePlannedByCategory = {};
+    const remainingPlannedByCategory = {};
+    let totalWholePlanned = 0;
+    let totalRemainingPlanned = 0;
 
-    $("transaction-description")
-        .value = "";
+    if (state.mode === 'semester') {
+      // Semester Mode:
+      // Entered value is for the entire From -> To period.
+      // Remaining for future = max(0, Entered Plan - Actual Spent).
+      CATEGORIES.forEach(c => {
+        const entered = Number(state.plannedExpenses[c.id]) || 0;
+        wholePlannedByCategory[c.id] = entered;
+        totalWholePlanned += entered;
 
+        const spent = actualByCategory[c.id] || 0;
+        const rem = Math.max(0, entered - spent);
+        remainingPlannedByCategory[c.id] = rem;
+        totalRemainingPlanned += rem;
+      });
+    } else {
+      // Monthly Mode:
+      // Entered value is recurring monthly amount.
+      // Convert to daily rate: (monthlyAmount * 12) / 365
+      CATEGORIES.forEach(c => {
+        const monthly = Number(state.plannedExpenses[c.id]) || 0;
+        const dailyRate = (monthly * 12) / 365;
 
-    $("validation-message")
-        .textContent = "";
+        const wholeAmt = dailyRate * totalDays;
+        wholePlannedByCategory[c.id] = wholeAmt;
+        totalWholePlanned += wholeAmt;
 
-
-    renderTransactions();
-
-    calculateAndRender();
-
-}
-
-
-// ==========================================================
-// 29. DELETE TRANSACTION
-// ==========================================================
-
-function deleteTransaction(id) {
-
-    transactions =
-        transactions.filter(
-            transaction =>
-                transaction.id !== id
-        );
-
-
-    renderTransactions();
-
-    calculateAndRender();
-
-}
-
-
-// ==========================================================
-// 30. RENDER TRANSACTIONS
-// ==========================================================
-
-function renderTransactions() {
-
-    const container =
-        $("transaction-list");
-
-
-    if (
-        transactions.length === 0
-    ) {
-
-        container.innerHTML =
-            `
-            <p class="empty">
-                No actual expenses recorded yet.
-            </p>
-            `;
-
-        return;
+        // Future planned is based purely on the remaining calendar days
+        const remAmt = dailyRate * remainingDays;
+        remainingPlannedByCategory[c.id] = remAmt;
+        totalRemainingPlanned += remAmt;
+      });
     }
 
-
-    const sorted =
-        [...transactions].sort(
-            (a, b) =>
-                b.date.localeCompare(
-                    a.date
-                )
-        );
-
-
-    container.innerHTML =
-        sorted.map(
-            transaction => {
-
-                const category =
-                    categoryNames[
-                        transaction.category
-                    ] ||
-                    "Other";
-
-
-                return `
-
-                    <div class="transaction-row">
-
-                        <span>
-                            ${escapeHtml(
-                                transaction.date
-                            )}
-                        </span>
-
-
-                        <div>
-
-                            <strong>
-                                ${escapeHtml(
-                                    transaction.description
-                                )}
-                            </strong>
-
-                            <br>
-
-                            <span>
-                                ${escapeHtml(
-                                    category
-                                )}
-                            </span>
-
-                        </div>
-
-
-                        <strong>
-                            ₹${formatMoney(
-                                transaction.amount
-                            )}
-                        </strong>
-
-
-                        <button
-                            class="delete-transaction"
-                            type="button"
-                            data-delete-id="${escapeHtml(
-                                transaction.id
-                            )}"
-                        >
-                            Delete
-                        </button>
-
-                    </div>
-
-                `;
-            }
-        ).join("");
-}
-
-
-// ==========================================================
-// 31. SAVE SAVINGS GOAL
-// ==========================================================
-
-function saveGoal() {
-
-    const name =
-        $("goal-name")
-            .value
-            .trim() ||
-        "Savings goal";
-
-
-    const target =
-        getNumber(
-            "goal-target"
-        );
-
-
-    const current =
-        getNumber(
-            "goal-current"
-        );
-
-
-    if (
-        target <= 0
-    ) {
-
-        $("validation-message")
-            .textContent =
-            "Enter a savings target greater than ₹0.";
-
-        return;
+    // Expected Future Income
+    let expectedFutureIncome = 0;
+    if (state.mode === 'semester') {
+      expectedFutureIncome = Number(state.expectedIncome) || 0;
+    } else {
+      const monthlyIncome = Number(state.expectedIncome) || 0;
+      const dailyIncomeRate = (monthlyIncome * 12) / 365;
+      expectedFutureIncome = dailyIncomeRate * remainingDays;
     }
 
+    const availableNow = Number(state.availableNow) || 0;
 
-    savedGoal = {
+    // PROJECTED BALANCE:
+    // Available Now + Expected Future Income - Remaining Future Planned
+    // (Actual historical spend is NOT subtracted again from Available Now!)
+    const projectedBalance = availableNow + expectedFutureIncome - totalRemainingPlanned;
 
-        name,
+    // Daily safe spending:
+    // If projected balance > 0, how much discretionary surplus can be spent per remaining day?
+    const dailySafeSpend = remainingDays > 0 ? (projectedBalance > 0 ? projectedBalance / remainingDays : 0) : 0;
 
-        target,
+    // TermRunway Planning Health Indicator (0 - 100)
+    let healthScore = 50;
+    if (totalRemainingPlanned > 0 || totalWholePlanned > 0) {
+      const bufferRatio = totalRemainingPlanned > 0 ? (projectedBalance / totalRemainingPlanned) : (projectedBalance > 0 ? 1 : -1);
+      if (projectedBalance < 0) {
+        healthScore = Math.max(10, Math.round(40 + bufferRatio * 30));
+      } else {
+        healthScore = Math.min(100, Math.round(65 + Math.min(bufferRatio, 1) * 35));
+      }
+    } else if (projectedBalance >= 0) {
+      healthScore = 85;
+    }
 
-        current:
-            Math.min(
-                current,
-                target
-            )
-
+    return {
+      isValid: true,
+      fromDate,
+      toDate,
+      today,
+      forecastStartDate,
+      totalDays,
+      pastDays,
+      remainingDays,
+      availableNow,
+      expectedFutureIncome,
+      totalWholePlanned,
+      totalActualSpent,
+      totalRemainingPlanned,
+      projectedBalance,
+      dailySafeSpend,
+      healthScore,
+      wholePlannedByCategory,
+      actualByCategory,
+      remainingPlannedByCategory,
+      validTransactions
     };
+  }
 
+  // =========================================================================
+  // DOM UPDATES & RENDERING
+  // =========================================================================
+  function renderAll() {
+    const model = calculateModel();
 
-    $("validation-message")
-        .textContent = "";
+    // Timeline visual tags
+    document.getElementById('timelineTodayLabel').textContent = formatDateDisplay(new Date());
+    document.getElementById('timelineFromLabel').textContent = formatDateDisplay(parseDate(state.fromDate));
+    document.getElementById('timelineToLabel').textContent = formatDateDisplay(parseDate(state.toDate));
 
+    // Mode UI
+    document.getElementById('modeSemesterBtn').classList.toggle('active', state.mode === 'semester');
+    document.getElementById('modeMonthlyBtn').classList.toggle('active', state.mode === 'monthly');
+    document.getElementById('expenseModeBadge').textContent = state.mode === 'semester' ? 'Full Term Figures' : 'Monthly Recurring Figures';
+    document.getElementById('expenseModeDesc').textContent = state.mode === 'semester'
+      ? 'Enter your total budget per category for the whole planning window.'
+      : 'Enter your monthly budget per category. The engine prorates it over the remaining days.';
+    document.getElementById('incomeInputLabel').textContent = state.mode === 'semester'
+      ? 'Expected Future Income (₹)'
+      : 'Monthly Expected Income (₹)';
+    document.getElementById('incomeInputHint').textContent = state.mode === 'semester'
+      ? 'Lump-sum scholarships, stipends, or allowances expected before term ends'
+      : 'Monthly recurring stipend or allowance (prorated over remaining days)';
 
-    renderGoal();
+    if (!model.isValid) {
+      document.getElementById('projectedBalanceMessage').textContent = model.error;
+      document.getElementById('dashProjectedBalance').textContent = '—';
+      return;
+    }
 
-    saveData();
+    // Days preview in planner
+    document.getElementById('previewTotalDays').textContent = `${model.totalDays} days`;
+    document.getElementById('previewRemainingDays').textContent = `${model.remainingDays} days`;
+    document.getElementById('sumTotalPlannedDisplay').textContent = `₹${formatCurrency(model.totalWholePlanned)}`;
 
-}
+    // Core Dashboard Metrics
+    document.getElementById('dashProjectedBalance').textContent = formatCurrency(model.projectedBalance);
+    document.getElementById('dashAvailableNow').textContent = `₹${formatCurrency(model.availableNow)}`;
+    document.getElementById('dashExpectedIncome').textContent = `₹${formatCurrency(model.expectedFutureIncome)}`;
+    document.getElementById('dashTotalPlanned').textContent = `₹${formatCurrency(model.totalWholePlanned)}`;
+    document.getElementById('dashActualSpent').textContent = `₹${formatCurrency(model.totalActualSpent)}`;
+    document.getElementById('dashRemainingPlanned').textContent = `₹${formatCurrency(model.totalRemainingPlanned)}`;
+    document.getElementById('dashDaysRemaining').textContent = String(model.remainingDays);
+    document.getElementById('dashDailySafe').textContent = `₹${formatCurrency(model.dailySafeSpend)} / day`;
 
+    // Flow Strip
+    document.getElementById('flowAvailable').textContent = `₹${formatCurrency(model.availableNow)}`;
+    document.getElementById('flowIncome').textContent = `₹${formatCurrency(model.expectedFutureIncome)}`;
+    document.getElementById('flowRemainingPlan').textContent = `₹${formatCurrency(model.totalRemainingPlanned)}`;
+    document.getElementById('dashTimelineSubtitle').textContent = `Forecast: ${formatDateDisplay(model.forecastStartDate)} → ${formatDateDisplay(model.toDate)}`;
 
-// ==========================================================
-// 32. RENDER SAVINGS GOAL
-// ==========================================================
+    // Status Pill & Messaging
+    const statusPill = document.getElementById('runwayStatusBadge');
+    const msgEl = document.getElementById('projectedBalanceMessage');
+    const projCard = document.getElementById('projectedBalanceCard');
 
-function renderGoal() {
+    if (model.projectedBalance >= 0) {
+      statusPill.className = 'status-pill status-healthy';
+      statusPill.textContent = 'Runway Healthy';
+      msgEl.textContent = `Your finances are fully solvent through ${formatDateDisplay(model.toDate)} with a projected reserve of ₹${formatCurrency(model.projectedBalance)}.`;
+      projCard.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+    } else {
+      statusPill.className = 'status-pill status-deficit';
+      statusPill.textContent = 'Projected Deficit';
+      msgEl.textContent = `Warning: Anticipated commitments exceed available funds by ₹${formatCurrency(Math.abs(model.projectedBalance))} before term end.`;
+      projCard.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+    }
 
-    if (
-        !savedGoal
-    ) {
+    // Health Score
+    document.getElementById('dashHealthScore').textContent = String(model.healthScore);
+    const catEl = document.getElementById('dashHealthCategory');
+    if (model.healthScore >= 75) {
+      catEl.textContent = 'Strong Runway Buffer';
+      catEl.className = 'metric-caption text-success';
+    } else if (model.healthScore >= 50) {
+      catEl.textContent = 'Balanced / Moderate Buffer';
+      catEl.className = 'metric-caption text-accent';
+    } else {
+      catEl.textContent = 'Deficit Risk / Action Needed';
+      catEl.className = 'metric-caption text-danger';
+    }
 
-        setText(
-            "goal-display-name",
-            "No goal yet"
-        );
+    // Render Sub-tables and Charts
+    renderTransactionsTable(model.validTransactions);
+    renderAnalysisTable(model);
+    renderSavingsGoal(model);
+    renderCharts(model);
+  }
 
+  // --- Transactions Ledger ---
+  function renderTransactionsTable(validTxns) {
+    const tbody = document.getElementById('transactionsTableBody');
+    const countBadge = document.getElementById('txnCountBadge');
+    countBadge.textContent = `${validTxns.length} active entries`;
 
-        setText(
-            "goal-display-percent",
-            "0%"
-        );
+    if (validTxns.length === 0) {
+      tbody.innerHTML = `
+        <tr class="empty-row">
+          <td colspan="5">No transactions recorded inside the active period yet.</td>
+        </tr>
+      `;
+      return;
+    }
 
+    // Sort descending by date
+    const sorted = [...validTxns].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        setText(
-            "goal-remaining",
-            "0.00"
-        );
+    tbody.innerHTML = sorted.map(t => {
+      const catObj = CATEGORIES.find(c => c.id === t.category) || { label: t.category };
+      return `
+        <tr>
+          <td>${t.date}</td>
+          <td><span class="cat-tag">${catObj.label}</span></td>
+          <td>${escapeHtml(t.desc || '—')}</td>
+          <td class="text-right font-numeric">₹${formatCurrency(t.amount)}</td>
+          <td class="text-center">
+            <button class="btn-delete-icon" data-id="${t.id}" title="Delete entry">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
 
+    // Bind delete actions
+    tbody.querySelectorAll('.btn-delete-icon').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        deleteExpense(id);
+      });
+    });
+  }
 
-        setText(
-            "goal-monthly",
-            "0.00"
-        );
+  function deleteExpense(id) {
+    state.transactions = state.transactions.filter(t => t.id !== id);
+    saveState();
+    renderAll();
+  }
 
+  // --- Spending Analysis Table ---
+  function renderAnalysisTable(model) {
+    const tbody = document.getElementById('analysisTableBody');
 
-        $("goal-progress-bar")
-            .style
-            .width =
-            "0%";
+    tbody.innerHTML = CATEGORIES.map(cat => {
+      const whole = model.wholePlannedByCategory[cat.id] || 0;
+      const actual = model.actualByCategory[cat.id] || 0;
+      const rem = model.remainingPlannedByCategory[cat.id] || 0;
 
+      let pct = whole > 0 ? Math.min(100, Math.round((actual / whole) * 100)) : (actual > 0 ? 100 : 0);
+      let statusBadge = '<span class="badge">On Track</span>';
 
+      if (whole > 0 && actual > whole) {
+        statusBadge = '<span class="badge text-danger" style="border-color: rgba(239,68,68,0.4)">Over Budget</span>';
+      } else if (whole > 0 && pct >= 85) {
+        statusBadge = '<span class="badge text-warning" style="border-color: rgba(245,158,11,0.4)">Near Limit</span>';
+      }
+
+      return `
+        <tr>
+          <td><strong>${cat.label}</strong></td>
+          <td class="text-right font-numeric">₹${formatCurrency(whole)}</td>
+          <td class="text-right font-numeric text-accent">₹${formatCurrency(actual)}</td>
+          <td class="text-right font-numeric">₹${formatCurrency(rem)}</td>
+          <td>
+            <div class="table-progress-track">
+              <div class="table-progress-fill" style="width: ${pct}%; background: ${pct > 100 ? 'var(--accent-danger)' : 'var(--accent-primary)'};"></div>
+            </div>
+          </td>
+          <td class="text-center">${statusBadge}</td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // --- Savings Goal Render ---
+  function renderSavingsGoal(model) {
+    const goal = state.savingsGoal;
+    const target = Number(goal.target) || 0;
+    const saved = Number(goal.saved) || 0;
+    const remaining = Math.max(0, target - saved);
+    const pct = target > 0 ? Math.min(100, Math.round((saved / target) * 100)) : 0;
+
+    document.getElementById('goalPctText').textContent = `${pct}%`;
+    document.getElementById('goalRemainingText').textContent = `₹${formatCurrency(remaining)}`;
+    document.getElementById('goalProgressBar').style.width = `${pct}%`;
+
+    const remainingMonths = Math.max(0.2, model.remainingDays / 30.4);
+    const monthlyNeeded = remaining / remainingMonths;
+    document.getElementById('goalMonthlyPace').textContent = `₹${formatCurrency(monthlyNeeded)} / month`;
+  }
+
+  // --- Decision Center Simulation ---
+  function evaluateAffordability() {
+    const cost = Number(document.getElementById('affordCost').value) || 0;
+    const itemName = document.getElementById('affordItem').value.trim() || 'This purchase';
+
+    const box = document.getElementById('affordResultBox');
+    if (cost <= 0) {
+      box.style.display = 'none';
+      return;
+    }
+
+    const model = calculateModel();
+    if (!model.isValid) return;
+
+    const newProjected = model.projectedBalance - cost;
+    const newDaily = model.remainingDays > 0 ? (newProjected > 0 ? newProjected / model.remainingDays : 0) : 0;
+
+    const badge = document.getElementById('affordBadge');
+    const title = document.getElementById('affordTitle');
+    const detail = document.getElementById('affordDetail');
+
+    box.style.display = 'block';
+    document.getElementById('affordNewBalance').textContent = `₹${formatCurrency(newProjected)}`;
+    document.getElementById('affordNewDaily').textContent = `₹${formatCurrency(newDaily)}/day`;
+
+    if (newProjected >= model.totalRemainingPlanned * 0.15 && newProjected > 0) {
+      badge.className = 'decision-badge badge-success';
+      badge.textContent = 'Comfortably Affordable';
+      title.textContent = `${itemName} fits safely within your runway`;
+      detail.textContent = `Purchasing this leaves a healthy projected buffer of ₹${formatCurrency(newProjected)} at term end.`;
+    } else if (newProjected >= 0) {
+      badge.className = 'decision-badge badge-warning';
+      badge.textContent = 'Tight / Feasible';
+      title.textContent = `${itemName} significantly narrows your margin`;
+      detail.textContent = `You will avoid a deficit, but your ending reserve drops to ₹${formatCurrency(newProjected)}.`;
+    } else {
+      badge.className = 'decision-badge badge-danger';
+      badge.textContent = 'Not Recommended';
+      title.textContent = `${itemName} triggers a projected term deficit`;
+      detail.textContent = `Making this purchase causes an anticipated shortfall of -₹${formatCurrency(Math.abs(newProjected))} before the term concludes.`;
+    }
+  }
+
+  // =========================================================================
+  // CHARTS (Chart.js)
+  // =========================================================================
+  function renderCharts(model) {
+    renderForecastChart(model);
+    renderCashFlowChart(model);
+    renderDistributionChart(model);
+  }
+
+  function renderForecastChart(model) {
+    const ctx = document.getElementById('forecastChart');
+    if (!ctx) return;
+
+    // Generate 7-8 evenly spaced simulation points from forecastStartDate to toDate
+    const pointsCount = 7;
+    const labels = [];
+    const balances = [];
+
+    const startMs = model.forecastStartDate.getTime();
+    const endMs = model.toDate.getTime();
+    const stepMs = (endMs - startMs) / (pointsCount - 1);
+
+    const totalDaysRemaining = Math.max(1, model.remainingDays);
+
+    for (let i = 0; i < pointsCount; i++) {
+      const currentPointDate = new Date(startMs + stepMs * i);
+      labels.push(formatDateDisplay(currentPointDate));
+
+      const daysPassedFromStart = Math.max(0, getDiffDays(model.forecastStartDate, currentPointDate));
+      const fraction = Math.min(1, daysPassedFromStart / totalDaysRemaining);
+
+      const proratedIncome = model.expectedFutureIncome * fraction;
+      const proratedExpenses = model.totalRemainingPlanned * fraction;
+
+      // Balance progression forward from Available Now
+      const currentBalance = model.availableNow + proratedIncome - proratedExpenses;
+      balances.push(Math.round(currentBalance));
+    }
+
+    if (forecastChartInstance) {
+      forecastChartInstance.destroy();
+    }
+
+    forecastChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Projected Runway Balance (₹)',
+          data: balances,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.08)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 2.5,
+          pointBackgroundColor: '#3b82f6',
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` Projected: ₹${formatCurrency(ctx.parsed.y)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: { color: '#94a3b8', font: { size: 11 } }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: {
+              color: '#94a3b8',
+              font: { size: 11 },
+              callback: (v) => `₹${v}`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderCashFlowChart(model) {
+    const ctx = document.getElementById('cashFlowChart');
+    if (!ctx) return;
+
+    if (cashFlowChartInstance) {
+      cashFlowChartInstance.destroy();
+    }
+
+    cashFlowChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Available Now', 'Future Income', 'Remaining Plan', 'Projected End'],
+        datasets: [{
+          data: [
+            model.availableNow,
+            model.expectedFutureIncome,
+            model.totalRemainingPlanned,
+            Math.max(0, model.projectedBalance)
+          ],
+          backgroundColor: [
+            '#3b82f6',
+            '#10b981',
+            '#f59e0b',
+            model.projectedBalance >= 0 ? '#6366f1' : '#ef4444'
+          ],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ₹${formatCurrency(ctx.parsed.y)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#94a3b8', font: { size: 11 } }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: {
+              color: '#94a3b8',
+              font: { size: 11 },
+              callback: (v) => `₹${v}`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderDistributionChart(model) {
+    const ctx = document.getElementById('distributionChart');
+    if (!ctx) return;
+
+    const labels = [];
+    const values = [];
+    const colors = [
+      '#3b82f6', '#10b981', '#f59e0b', '#ec4899',
+      '#8b5cf6', '#06b6d4', '#14b8a6', '#64748b'
+    ];
+
+    CATEGORIES.forEach(c => {
+      const amt = model.wholePlannedByCategory[c.id] || 0;
+      if (amt > 0) {
+        labels.push(c.label);
+        values.push(amt);
+      }
+    });
+
+    if (distributionChartInstance) {
+      distributionChartInstance.destroy();
+    }
+
+    distributionChartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: labels.length > 0 ? labels : ['No expenses budgeted'],
+        datasets: [{
+          data: values.length > 0 ? values : [1],
+          backgroundColor: values.length > 0 ? colors.slice(0, values.length) : ['#334155'],
+          borderWidth: 1,
+          borderColor: '#0f172a'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 }
+          }
+        },
+        cutout: '70%'
+      }
+    });
+  }
+
+  // --- Escape Helper ---
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // =========================================================================
+  // EVENT LISTENERS & INITIALIZATION
+  // =========================================================================
+  function initInputsFromState() {
+    document.getElementById('inputFromDate').value = state.fromDate;
+    document.getElementById('inputToDate').value = state.toDate;
+    document.getElementById('inputAvailableNow').value = state.availableNow || '';
+    document.getElementById('inputExpectedIncome').value = state.expectedIncome || '';
+
+    // Category Inputs
+    CATEGORIES.forEach(c => {
+      const el = document.getElementById(`plan_${c.id}`);
+      if (el) el.value = state.plannedExpenses[c.id] || '';
+    });
+
+    // Savings Goal
+    document.getElementById('goalName').value = state.savingsGoal.name || '';
+    document.getElementById('goalTarget').value = state.savingsGoal.target || '';
+    document.getElementById('goalSaved').value = state.savingsGoal.saved || '';
+
+    // Transaction form date defaults to today's date formatted
+    document.getElementById('txnDate').value = formatDateIso(new Date());
+  }
+
+  function bindEvents() {
+    // Mode toggles
+    document.getElementById('modeSemesterBtn').addEventListener('click', () => {
+      state.mode = 'semester';
+      saveState();
+      renderAll();
+    });
+
+    document.getElementById('modeMonthlyBtn').addEventListener('click', () => {
+      state.mode = 'monthly';
+      saveState();
+      renderAll();
+    });
+
+    // Date changes
+    document.getElementById('inputFromDate').addEventListener('change', (e) => {
+      state.fromDate = e.target.value;
+      saveState();
+      renderAll();
+    });
+
+    document.getElementById('inputToDate').addEventListener('change', (e) => {
+      state.toDate = e.target.value;
+      saveState();
+      renderAll();
+    });
+
+    // Starting money & income
+    document.getElementById('inputAvailableNow').addEventListener('input', (e) => {
+      state.availableNow = Number(e.target.value) || 0;
+      saveState();
+      renderAll();
+    });
+
+    document.getElementById('inputExpectedIncome').addEventListener('input', (e) => {
+      state.expectedIncome = Number(e.target.value) || 0;
+      saveState();
+      renderAll();
+    });
+
+    // Category planned inputs
+    CATEGORIES.forEach(c => {
+      const el = document.getElementById(`plan_${c.id}`);
+      if (el) {
+        el.addEventListener('input', (e) => {
+          state.plannedExpenses[c.id] = Number(e.target.value) || 0;
+          saveState();
+          renderAll();
+        });
+      }
+    });
+
+    // Add Expense Transaction
+    document.getElementById('addExpenseForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const dateVal = document.getElementById('txnDate').value;
+      const catVal = document.getElementById('txnCategory').value;
+      const descVal = document.getElementById('txnDesc').value.trim();
+      const amtVal = Number(document.getElementById('txnAmount').value) || 0;
+
+      if (!dateVal || amtVal <= 0) {
+        alert('Please provide a valid date and amount.');
         return;
-    }
-
-
-    const remaining =
-        Math.max(
-            0,
-            savedGoal.target -
-            savedGoal.current
-        );
-
-
-    const percentage =
-        Math.min(
-            100,
-            Math.round(
-                (
-                    savedGoal.current /
-                    savedGoal.target
-                ) *
-                100
-            )
-        );
-
-
-    const endDateValue =
-        $("semester-end")
-            .value;
-
-
-    const endDate =
-        parseDate(
-            endDateValue
-        );
-
-
-    let timeRemainingMonths =
-        1;
-
-
-    if (
-        endDate &&
-        endDate > localToday()
-    ) {
-
-        const days =
-            daysBetween(
-                localToday(),
-                endDate
-            );
-
-
-        timeRemainingMonths =
-            Math.max(
-                days / 30.4375,
-                0.01
-            );
-
-    }
-
-
-    const monthlyRequired =
-        remaining /
-        timeRemainingMonths;
-
-
-    setText(
-        "goal-display-name",
-        savedGoal.name
-    );
-
-
-    setText(
-        "goal-display-percent",
-        `${percentage}%`
-    );
-
-
-    setText(
-        "goal-remaining",
-        formatMoney(
-            remaining
-        )
-    );
-
-
-    setText(
-        "goal-monthly",
-        formatMoney(
-            monthlyRequired
-        )
-    );
-
-
-    $("goal-progress-bar")
-        .style
-        .width =
-        `${percentage}%`;
-
-}
-
-
-// ==========================================================
-// 33. SAVE DATA
-// ==========================================================
-
-function saveData() {
-
-    const inputData = {};
-
-
-    document
-        .querySelectorAll(
-            "input"
-        )
-        .forEach(
-            input => {
-
-                inputData[
-                    input.id
-                ] =
-                    input.value;
-
-            }
-        );
-
-
-    const data = {
-
-        mode:
-            isMonthlyMode
-                ? "monthly"
-                : "semester",
-
-        inputs:
-            inputData,
-
-        transactions,
-
-        goal:
-            savedGoal
-
-    };
-
-
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-    );
-
-}
-
-
-// ==========================================================
-// 34. LOAD DATA
-// ==========================================================
-
-function loadData() {
-
-    const saved =
-        localStorage.getItem(
-            STORAGE_KEY
-        );
-
-
-    if (
-        !saved
-    ) {
-
-        return;
-    }
-
-
-    try {
-
-        const data =
-            JSON.parse(
-                saved
-            );
-
-
-        if (
-            data.inputs
-        ) {
-
-            Object.entries(
-                data.inputs
-            ).forEach(
-                (
-                    [
-                        id,
-                        value
-                    ]
-                ) => {
-
-                    const input =
-                        $(id);
-
-
-                    if (
-                        input
-                    ) {
-
-                        input.value =
-                            value;
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        transactions =
-            Array.isArray(
-                data.transactions
-            )
-                ? data.transactions
-                : [];
-
-
-        savedGoal =
-            data.goal ||
-            null;
-
-
-        setMode(
-            data.mode ===
-            "monthly"
-        );
-
-
-        renderTransactions();
-
-        renderGoal();
-
-        calculateAndRender();
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "TermRunway data could not be loaded:",
-            error
-        );
-
-
-        localStorage.removeItem(
-            STORAGE_KEY
-        );
-
-    }
-
-}
-
-
-// ==========================================================
-// 35. RESET
-// ==========================================================
-
-function resetAll() {
-
-    document
-        .querySelectorAll(
-            "input"
-        )
-        .forEach(
-            input => {
-
-                input.value = "";
-
-            }
-        );
-
-
-    transactions = [];
-
-    savedGoal = null;
-
-
-    localStorage.removeItem(
-        STORAGE_KEY
-    );
-
-
-    setMode(false);
-
-
-    $("validation-message")
-        .textContent = "";
-
-
-    renderTransactions();
-
-    renderGoal();
-
-
-    const emptyModel = {
-
-        availableNow: 0,
-
-        expectedIncome: 0,
-
-        plannedExpenses: 0,
-
-        projectedBalance: 0,
-
-        actualExpenses: 0,
-
-        dailySafeSpending: 0,
-
-        daysRemaining: 0,
-
-        endDate: null,
-
-        endDateValue: "",
-
-        categoryRows: [],
-
-        score: 0
-
-    };
-
-
-    updateDashboard(
-        emptyModel
-    );
-
-}
-
-
-// ==========================================================
-// 36. MAIN RENDER
-// ==========================================================
-
-function calculateAndRender() {
-
-    const model =
-        calculateModel();
-
-
-    updateDashboard(
-        model
-    );
-
-
-    saveData();
-
-
-    return model;
-}
-
-
-// ==========================================================
-// 37. EVENT LISTENERS
-// ==========================================================
-
-$("calculate-btn")
-    .addEventListener(
-        "click",
-        calculateAndRender
-    );
-
-
-$("reset-btn")
-    .addEventListener(
-        "click",
-        resetAll
-    );
-
-
-$("add-transaction-btn")
-    .addEventListener(
-        "click",
-        addTransaction
-    );
-
-
-$("check-afford-btn")
-    .addEventListener(
-        "click",
-        checkAffordability
-    );
-
-
-$("save-goal-btn")
-    .addEventListener(
-        "click",
-        saveGoal
-    );
-
-
-$("download-btn")
-    .addEventListener(
-        "click",
-        () => {
-
-            window.print();
-
-        }
-    );
-
-
-$("transaction-list")
-    .addEventListener(
-        "click",
-        event => {
-
-            const button =
-                event.target.closest(
-                    "[data-delete-id]"
-                );
-
-
-            if (
-                button
-            ) {
-
-                deleteTransaction(
-                    button.dataset.deleteId
-                );
-
-            }
-
-        }
-    );
-
-
-// ==========================================================
-// 38. NUMBER INPUT PROTECTION
-// ==========================================================
-
-document
-    .querySelectorAll(
-        'input[type="number"]'
-    )
-    .forEach(
-        input => {
-
-            input.addEventListener(
-                "keydown",
-                event => {
-
-                    const invalid =
-                        [
-                            "-",
-                            "+",
-                            "e",
-                            "E"
-                        ];
-
-
-                    if (
-                        invalid.includes(
-                            event.key
-                        )
-                    ) {
-
-                        event.preventDefault();
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-// ==========================================================
-// 39. INITIALIZATION
-// ==========================================================
-
-window.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        const today =
-            dateToInputValue(
-                localToday()
-            );
-
-        const planningStart =
-            $("planning-start");
-
-        if (
-            planningStart &&
-            !planningStart.value
-        ) {
-
-            planningStart.value =
-                today;
-
-        }
-
-        const transactionDate =
-            $("transaction-date");
-
-
-        if (
-            transactionDate
-        ) {
-
-            transactionDate.value =
-                today;
-
-            transactionDate.max =
-                today;
-
-        }
-
-
-        loadData();
-
-    }
-);
+      }
+
+      const newTxn = {
+        id: 'txn_' + Date.now(),
+        date: dateVal,
+        category: catVal,
+        desc: descVal,
+        amount: amtVal
+      };
+
+      state.transactions.push(newTxn);
+      saveState();
+      renderAll();
+
+      // Reset form fields
+      document.getElementById('txnAmount').value = '';
+      document.getElementById('txnDesc').value = '';
+    });
+
+    // Savings Goal inputs
+    document.getElementById('goalName').addEventListener('input', (e) => {
+      state.savingsGoal.name = e.target.value;
+      saveState();
+    });
+
+    document.getElementById('goalTarget').addEventListener('input', (e) => {
+      state.savingsGoal.target = Number(e.target.value) || 0;
+      saveState();
+      renderSavingsGoal(calculateModel());
+    });
+
+    document.getElementById('goalSaved').addEventListener('input', (e) => {
+      state.savingsGoal.saved = Number(e.target.value) || 0;
+      saveState();
+      renderSavingsGoal(calculateModel());
+    });
+
+    // Decision Center
+    document.getElementById('evalAffordBtn').addEventListener('click', evaluateAffordability);
+
+    // Print summary
+    document.getElementById('printSummaryBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Reset data
+    document.getElementById('resetAllDataBtn').addEventListener('click', () => {
+      if (confirm('Reset all TermRunway planning data and transactions to defaults?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        state = JSON.parse(JSON.stringify(defaultState));
+        initInputsFromState();
+        renderAll();
+      }
+    });
+  }
+
+  // --- Initialize App ---
+  initInputsFromState();
+  bindEvents();
+  renderAll();
+
+})();
